@@ -1,0 +1,63 @@
+---
+import type { Publication } from "../data/publications";
+
+interface Props {
+  items: Publication[];
+}
+const { items } = Astro.props;
+---
+<ul class="pubs">
+  {items.map((p) => (
+    <li>
+      <p class="title">{p.title}</p>
+      {p.coauthors && <p class="meta">with {p.coauthors}</p>}
+      {(p.journal || p.status) && (
+        <p class="meta">
+          {p.journal && <em>{p.journal}</em>}
+          {p.details ? ` ${p.details}` : ""}
+          {p.status && <span class="status">{p.status}</span>}
+        </p>
+      )}
+      {p.links && p.links.length > 0 && (
+        <p class="links">
+          {p.links.map((l) => (
+            <a href={l.href} target="_blank" rel="noopener">{l.label}</a>
+          ))}
+        </p>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .pubs { list-style: none; margin: 0; padding: 0; }
+  li { padding: 1.1rem 0; border-top: 1px solid var(--line); }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  p { margin: 0; }
+  .title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .meta { color: var(--muted); font-size: 0.95rem; margin-top: 0.2rem; }
+  .status {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0 0.6rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+  .links { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .links a {
+    font-size: 0.85rem;
+    padding: 0.15rem 0.7rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .links a:hover { background: var(--accent); color: #fff; }
+</style>

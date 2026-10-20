@@ -1,0 +1,13 @@
+---
+import { site } from "../data/site";
+---
+<footer>
+  <div class="wrap">
+    <p>© {new Date().getFullYear()} {site.name} · {site.affiliation}</p>
+  </div>
+</footer>
+
+<style>
+  footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.9rem; }
+  p { margin: 0; }
+</style>

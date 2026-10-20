@@ -1,16 +1,63 @@
 ---
----
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+const topics = [
+  "Collective Decision-Making",
+  "Bargaining Games",
+  "Experimental Economics",
+  "Behavioral Economics",
+  "Industrial Organization",
+  "Experimental Political Economy",
+];
+---
+<Layout>
+  <div class="wrap page">
+    <div class="prose">
+      <p class="eyebrow">{site.title} · {site.affiliation}</p>
+      <h1>{site.name}</h1>
+
+      <p class="lede">
+        I build and test models to understand multilateral bargaining,
+        contracting, and incentive provision in groups.
+      </p>
+
+      <p>
+        I am an associate professor of economics at New York University Abu
+        Dhabi. I study the trade-off between productive and rent-seeking
+        activities that arise in human organizations, and the mechanisms that
+        promote efficiency in those settings.
+      </p>
+
+      <ul class="tags">
+        {topics.map((t) => <li>{t}</li>)}
+      </ul>
+
+      <p>
+        I am the director of the Social Science Experimental Laboratory (SSEL)
+        and director of the cluster of Experimental Social Science at NYU Abu
+        Dhabi.
+      </p>
+
+      <aside class="callout">
+        <p class="eyebrow">New tool</p>
+        <h3>Communication Annotation Tool (CAT)</h3>
+        <p>
+          A browser-based platform, developed with David J. Cooper and Jeong Kyu
+          Lee, that helps experimental social scientists analyze free-form
+          communication using large language models. Build coding manuals,
+          annotate with multiple LLMs, assess reliability, and generate
+          replication-ready datasets, with no programming required.
+        </p>
+        <a class="button" href="#">Visit the CAT website</a>
+      </aside>
+
+      <h2>Education</h2>
+      <p>
+        Ph.D. in Economics, Ohio State University, 2015<br />
+        M.A. in Economics, Ohio State University, 2010<br />
+        B.A. in Economics, Universidad de Costa Rica, 2009
+      </p>
+    </div>
+  </div>
+</Layout>

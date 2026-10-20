@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicationList from "../components/PublicationList.astro";
+import { published, workingPapers, inProgress } from "../data/publications";
+---
+<Layout title="Research" description="Published articles, working papers, and work in progress.">
+  <div class="wrap page">
+    <div class="prose">
+      <p class="eyebrow">Research</p>
+      <h1>Research</h1>
+      <p class="lede">
+        Work on bargaining, collective decision-making, and incentives in
+        groups, using experiments and theory.
+      </p>
+
+      <nav class="jump" aria-label="On this page">
+        <a href="#published">Published articles</a>
+        <a href="#working">Working papers</a>
+        <a href="#progress">Work in progress</a>
+      </nav>
+
+      <section id="published">
+        <h2>Published Articles</h2>
+        <PublicationList items={published} />
+      </section>
+
+      <section id="working">
+        <h2>Working Papers</h2>
+        <PublicationList items={workingPapers} />
+      </section>
+
+      <section id="progress">
+        <h2>Work in Progress</h2>
+        <PublicationList items={inProgress} />
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1.5rem; font-size: 0.95rem; }
+  section { scroll-margin-top: 1rem; }
+</style>
