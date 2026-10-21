@@ -22,7 +22,7 @@ export const currentCourses: Course[] = [
     title: "Behavioral Economics",
     description:
       "This course introduces students to the field of behavioral economics, which seeks to combine standard economic modeling with more psychologically plausible assumptions about human behavior. This is accomplished by making nonstandard assumptions about human preferences, exploring nonstandard beliefs, and emphasizing the limitations of our decision-making faculties.",
-    // syllabus: "/syllabi/behavioral-economics.pdf",  // add once he provides it
+    syllabus: "/syllabi/behavioral-econ.pdf",  // add once he provides it
   },
   {
     title: "Fairness",

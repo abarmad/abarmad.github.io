@@ -25,7 +25,7 @@ export const published: Publication[] = [
     coauthors: "Nick Haas",
     journal: "PNAS Nexus",
     details: "4(1), 2025",
-    links: [{ label: "Publisher page", href: "https://academic.oup.com/pnasnexus/article/4/1/pgae553/7960037" }],
+    links: [{ label: "PDF", href: "/papers/exclusionary-bargaining.pdf" }],
   },
   {
     title: "Sharing the Burden of Negative Externalities: A Tale of Gridlock and Accountability Elusion",
@@ -73,13 +73,13 @@ export const published: Publication[] = [
     title: "Endogenous Claims and Collective Production: An Experimental Study on the Timing of Profit-Sharing Negotiations and Production",
     journal: "Experimental Economics",
     details: "22(4), 2019: 857–884",
-    links: [{ label: "Publisher page", href: "https://link.springer.com/article/10.1007/s10683-018-9591-2" }],
+    links: [{ label: "PDF", href: "/papers/endogenous-claims.pdf" }],
   },
   {
     title: "Voluntary Contributions and Collective Redistribution",
     journal: "American Economic Journal: Microeconomics",
     details: "8(4), 2016: 149–173",
-    links: [{ label: "Publisher page", href: "https://www.aeaweb.org/articles?id=10.1257/mic.20140240" }],
+    links: [{ label: "PDF", href: "/papers/voluntary-contributions.pdf" }],
   },
   {
     title: "Communication in Legislative Bargaining",
@@ -87,7 +87,7 @@ export const published: Publication[] = [
     journal: "Journal of the Economic Science Association",
     details: "1(1), 2015: 59–71",
     links: [
-      { label: "Publisher page", href: "https://link.springer.com/article/10.1007/s40881-015-0011-5" },
+      { label: "PDF", href: "/papers/legislative-bargaining.pdf" },
       { label: "Data", href: "/data/communication_data.csv" },
     ],
   },

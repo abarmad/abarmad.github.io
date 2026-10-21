@@ -2,42 +2,114 @@
 import Layout from "../layouts/Layout.astro";
 import PublicationList from "../components/PublicationList.astro";
 import { published, workingPapers, inProgress } from "../data/publications";
+
+// One place to define the sections; empty ones are hidden automatically.
+const sections = [
+  { id: "published", title: "Published Articles", label: "Published articles", items: published, showTop: false },
+  { id: "working", title: "Working Papers", label: "Working papers", items: workingPapers, showTop: true },
+  { id: "progress", title: "Work in Progress", label: "Work in progress", items: inProgress, showTop: true },
+].filter((s) => s.items.length > 0);
 ---
 <Layout title="Research" description="Published articles, working papers, and work in progress.">
   <div class="wrap page">
     <div class="prose">
-      <p class="eyebrow">Research</p>
-      <h1>Research</h1>
-      <p class="lede">
-        Work on bargaining, collective decision-making, and incentives in
-        groups, using experiments and theory.
-      </p>
+      <header class="intro">
+        <h1>Research</h1>
 
-      <nav class="jump" aria-label="On this page">
-        <a href="#published">Published articles</a>
-        <a href="#working">Working papers</a>
-        <a href="#progress">Work in progress</a>
-      </nav>
+        <nav class="jump" aria-label="On this page">
+          {sections.map((s) => (
+            <a href={`#${s.id}`}>
+              {s.label}
+              <span class="count">{s.items.length}</span>
+            </a>
+          ))}
+        </nav>
+      </header>
 
-      <section id="published">
-        <h2>Published Articles</h2>
-        <PublicationList items={published} />
-      </section>
-
-      <section id="working">
-        <h2>Working Papers</h2>
-        <PublicationList items={workingPapers} />
-      </section>
-
-      <section id="progress">
-        <h2>Work in Progress</h2>
-        <PublicationList items={inProgress} />
-      </section>
+      {sections.map((s) => (
+        <section id={s.id} aria-labelledby={`${s.id}-heading`}>
+          <div class="section-head">
+            <h2 id={`${s.id}-heading`}>{s.title}</h2>
+            {s.showTop && <a class="top" href="#top" aria-label="Back to top">↑ Top</a>}
+          </div>
+          <PublicationList items={s.items} />
+        </section>
+      ))}
     </div>
   </div>
 </Layout>
 
 <style>
-  .jump { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1.5rem; font-size: 0.95rem; }
-  section { scroll-margin-top: 1rem; }
+  :global(html) { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) { scroll-behavior: auto; }
+  }
+
+  .prose { max-width: 60rem; }
+
+  .intro { padding-bottom: 0.5rem; }
+
+  /* ---------- Jump navigation ---------- */
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+  }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s, transform 0.15s;
+  }
+  .jump a:hover,
+  .jump a:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .count {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Sections ---------- */
+  section {
+    scroll-margin-top: 1.5rem;
+    margin-top: 3.5rem;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.7rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-head h2 {
+    margin: 0;
+    padding-left: 0.85rem;
+    border-left: 4px solid var(--accent);
+    line-height: 1.2;
+  }
+  .top {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .top:hover { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    section { margin-top: 2.5rem; }
+    .jump a { font-size: 0.9rem; }
+  }
 </style>

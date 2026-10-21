@@ -6,32 +6,95 @@ import { currentCourses, previousTeaching } from "../data/courses";
 <Layout title="Teaching" description="Current and previous courses.">
   <div class="wrap page">
     <div class="prose">
-      <p class="eyebrow">Teaching</p>
       <h1>Teaching</h1>
 
-      <section>
+      <section class="current">
         <h2>Currently Teaching at NYU Abu Dhabi</h2>
         <CourseList courses={currentCourses} />
       </section>
 
-      <section>
+      <section class="previous">
         <h2>Previous Teaching Experience</h2>
-        {previousTeaching.map((inst) => (
-          <div class="institution">
-            <h3 class="inst-name">
-              {inst.name}
-              {inst.period && <span class="period">{inst.period}</span>}
-            </h3>
-            <CourseList courses={inst.courses} />
+
+        <div class="previous-body">
+          <div class="previous-text">
+            {previousTeaching.map((inst) => (
+              <div class="institution">
+                <h3 class="inst-name">
+                  {inst.name}
+                  {inst.period && <span class="period">{inst.period}</span>}
+                </h3>
+                <CourseList courses={inst.courses} />
+              </div>
+            ))}
           </div>
-        ))}
+
+          <figure class="teaching-photo">
+            <img
+              src="/images/teaching-photo.jpeg"
+              alt="Giving a lecture at Maastricht University"
+              loading="lazy"
+            />
+            <figcaption>
+              January 2018. Giving a lecture about “Reflections on Academic
+              Discourse” at Maastricht University.
+            </figcaption>
+          </figure>
+        </div>
       </section>
     </div>
   </div>
 </Layout>
 
 <style>
+  /* Text keeps its ~39rem width; the extra room on the right holds the photo. */
+  .prose {
+    --photo-w: 26rem;
+    --photo-gap: 5rem;
+    max-width: calc(50rem + var(--photo-w) + var(--photo-gap));
+  }
+
   .institution { margin-top: 2rem; }
   .inst-name { font-size: 1.35rem; margin-bottom: 0.25rem; }
   .period { margin-left: 0.6rem; font-family: var(--sans); font-size: 0.95rem; font-weight: 400; color: var(--muted); }
+
+  /* ---------- Previous teaching: text on the left, photo on the right ---------- */
+  /* the two sections stack in a single column; only the area under the
+     "Previous Teaching Experience" heading is split in two */
+  .prose > section { display: block; }
+  /* Current teaching reserves the same right-hand space as the photo column,
+     so both sections have identical text widths. */
+  .current { padding-right: calc(var(--photo-w) + var(--photo-gap)); }
+  .previous-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--photo-w);
+    gap: var(--photo-gap);
+    align-items: start;
+  }
+  .previous-body .institution:first-child { margin-top: 0.5rem; }
+  .teaching-photo {
+    margin: 0;
+    position: sticky;
+    top: 1.5rem;
+  }
+  .teaching-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+  .teaching-photo figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* ---------- Smaller screens ---------- */
+  @media (max-width: 800px) {
+    .current { padding-right: 0; }
+    .previous-body { grid-template-columns: 1fr; gap: 1.5rem; }
+    .teaching-photo { position: static; max-width: 24rem; }
+  }
 </style>
