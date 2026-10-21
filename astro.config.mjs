@@ -1,15 +1,7 @@
-// // @ts-check
-// import { defineConfig } from 'astro/config';
-
-// // https://astro.build/config
-// export default defineConfig({
-// site: 'https://www.abarmad.com/',
-// });
-
-@ts-check
+// @ts-check
 import { defineConfig } from 'astro/config';
 
+// https://astro.build/config
 export default defineConfig({
-  site: 'https://abarmad.github.io',
-  base: '/abarmad',
+site: 'https://www.abarmad.com/',
 });
