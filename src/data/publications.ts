@@ -141,4 +141,5 @@ export const inProgress: Publication[] = [
   { title: "Beyond the Binary: Self Perception of Gender Identity and Bargaining Behavior", coauthors: "Nicholas Haas" },
   { title: "Contingent Reasoning in Conflict Resolution", coauthors: "Caleb Cox" },
   { title: "The Decision to Enter Negotiations", coauthors: "Marco Palma" },
+  { title: "Cultural Determinants of Exclusion", coauthors: "Hagai Rabinovitch, Margarita Leib, and Shaul Shalvi" },
 ];
