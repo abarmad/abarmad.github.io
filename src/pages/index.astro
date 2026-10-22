@@ -27,11 +27,14 @@ const topics = [
   "Experimental Game Theory",
 ];
 
-// Oldest first, so the timeline reads top to bottom
-const education = [
-  { year: "2009", degree: "B.A. in Economics", school: "Universidad de Costa Rica" },
-  { year: "2010", degree: "M.A. in Economics", school: "Ohio State University" },
-  { year: "2015", degree: "Ph.D. in Economics", school: "Ohio State University" },
+// Add more links here; each one shows as a logo card in the side column.
+const relatedLinks = [
+  {
+    name: "Social Science Experimental Laboratory (SSEL)",
+    cta: "Visit the SSEL website",
+    href: "https://ssel.abudhabi.nyu.edu/",
+    logo: "/images/ssel_logo.png",
+  },
 ];
 ---
 <Layout>
@@ -96,17 +99,26 @@ const education = [
           <li class="affiliation">{site.affiliation}</li>
         </ul>
 
-        <section class="education" aria-labelledby="edu-heading">
-          <h2 id="edu-heading">Education</h2>
-          <ol class="timeline">
-            {education.map((e) => (
+        <section class="related" aria-labelledby="links-heading">
+          <h2 id="links-heading">Beyond This Page</h2>
+          <ul class="link-list">
+            {relatedLinks.map((l) => (
               <li>
-                <span class="year">{e.year}</span>
-                <span class="degree">{e.degree}</span>
-                <span class="school">{e.school}</span>
+                <a
+                  class="link-card"
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`${l.name} (opens in a new tab)`}
+                >
+                  <img src={l.logo} alt={`${l.name} logo`} loading="lazy" />
+                  <span class="cta">
+                    {l.cta} <span class="arrow" aria-hidden="true">→</span>
+                  </span>
+                </a>
               </li>
             ))}
-          </ol>
+          </ul>
         </section>
       </div>
     </section>
@@ -120,7 +132,7 @@ const education = [
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 20rem;
-    gap: 5rem;
+    gap: 3rem;
     align-items: start;
     padding-right: 1.5rem;        /* pulls the photo column in from the right edge */
   }
@@ -151,53 +163,62 @@ const education = [
   .roles li { color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
   .roles .affiliation { color: var(--text); font-weight: 500; margin-top: 0.25rem; }
 
-  /* ---------- Education timeline (vertical, in the side column) ---------- */
-  .education {
+  /* ---------- Related links (logo cards, in the side column) ---------- */
+  .related {
     border-top: 1px solid var(--line);
     margin-top: 1.75rem;
     padding-top: 1.5rem;
   }
-  .education h2 { margin: 0 0 1.25rem; font-size: 1.15rem; }
+  .related h2 { margin: 0 0 1rem; font-size: 1.15rem; }
 
-  .timeline { list-style: none; margin: 0; padding: 0; }
-  .timeline li {
-    position: relative;
-    padding: 0 0 1.75rem 2rem;
+  .link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
   }
-  .timeline li:last-child { padding-bottom: 0; }
-  .timeline .year {
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-decoration: none;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .link-card img {
     display: block;
-    font-family: var(--serif);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--accent);
+    width: calc(100% - 2.5rem);
+    max-width: 14rem;
+    height: auto;
+    margin: 1.25rem auto 1rem;
   }
-  /* dot */
-  .timeline li::before {
-    content: "";
-    position: absolute;
-    top: 0.4rem;
-    left: 0;
-    width: 0.9rem;
-    height: 0.9rem;
-    border-radius: 50%;
+  /* button-style bar so it reads as clickable */
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1rem;
     background: var(--accent);
-    z-index: 1;
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: background 0.15s;
   }
-  /* line down to the next dot */
-  .timeline li::after {
-    content: "";
-    position: absolute;
-    top: 1.3rem;
-    bottom: -0.4rem;
-    left: calc(0.45rem - 1px);
-    width: 2px;
-    background: var(--line);
+  .arrow { display: inline-block; transition: transform 0.15s; }
+  .link-card:hover,
+  .link-card:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(11, 36, 71, 0.15);
+    transform: translateY(-2px);
   }
-  .timeline li:last-child::after { display: none; }
-
-  .timeline .degree { display: block; font-weight: 500; line-height: 1.4; }
-  .timeline .school { display: block; color: var(--muted); font-size: 0.95rem; }
+  .link-card:hover .cta,
+  .link-card:focus-visible .cta { background: var(--accent-dark); }
+  .link-card:hover .arrow,
+  .link-card:focus-visible .arrow { transform: translateX(4px); }
 
   /* ---------- News (stacked in the left column) ---------- */
   .news {

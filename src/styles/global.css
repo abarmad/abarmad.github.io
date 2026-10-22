@@ -1,11 +1,13 @@
 :root {
-  --bg: #faf8f4;
-  --surface: #ffffff;
-  --text: #1f2430;
-  --muted: #5b6270;
-  --accent: #1d3557;
-  --accent-soft: #e8edf4;
-  --line: #e3dfd6;
+  --bg: #ffffff;
+  --surface: #eef4fc;       /* light blue, used by cards */
+  --text: #111c2b;          /* near-black with a blue cast */
+  --muted: #4a5b6f;
+  --heading: #0b2447;       /* deep navy */
+  --accent: #0b5cd5;        /* saturated royal blue, roughly 6:1 on white */
+  --accent-dark: #083f96;   /* hover states */
+  --accent-soft: #d6e6fb;   /* bubbles; navy or accent-dark text reads well on it */
+  --line: #c3d3e8;          /* borders and dividers that actually show */
   --serif: "Source Serif 4 Variable", Georgia, serif;
   --sans: "Inter Variable", system-ui, -apple-system, sans-serif;
   --measure: 58rem;
@@ -31,7 +33,7 @@ body {
 h1, h2, h3 {
   font-family: var(--serif);
   line-height: 1.2;
-  color: var(--accent);
+  color: var(--heading);
   font-weight: 600;
   margin: 0 0 0.5em;
 }
@@ -90,4 +92,9 @@ a:hover { text-decoration-thickness: 2px; }
   font-size: 0.95rem;
   font-weight: 500;
 }
-.button:hover { opacity: 0.9; }
+/* .button:hover { opacity: 0.9; } */
+
+.button:hover { background: var(--accent-dark); opacity: 1; }
+a:hover { color: var(--accent-dark); }
+
+.tags li { color: var(--heading); }   /* darker text on the light blue bubbles */

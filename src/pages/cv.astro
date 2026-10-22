@@ -1,0 +1,71 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
+
+const cvPath = "/cv.pdf";
+---
+<Layout title="CV" description={`Curriculum vitae of ${site.name}.`}>
+  <div class="wrap page">
+    <h1>CV</h1>
+
+    <div class="actions">
+      <a class="button" href={cvPath} download="CV.pdf">Download PDF</a>
+      <a class="button ghost" href={cvPath} target="_blank" rel="noopener">Open in new tab</a>
+    </div>
+
+    <div class="viewer">
+      <iframe
+        src={`${cvPath}#view=FitH`}
+        title={`Curriculum vitae of ${site.name}`}
+        loading="lazy"
+      ></iframe>
+    </div>
+
+    <div class="fallback">
+      <p>
+        Your device may not show PDF previews inline. Use the buttons above to
+        open or download the CV.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.25rem 0 1.75rem; }
+  .button.ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .button.ghost:hover { background: var(--accent-soft); opacity: 1; }
+
+  .viewer {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .viewer iframe {
+    display: block;
+    width: 100%;
+    height: 80vh;
+    min-height: 600px;
+    border: 0;
+  }
+
+  .fallback { display: none; }
+
+  /* Phones often can't scroll an embedded PDF well, so show buttons only */
+  @media (max-width: 760px) {
+    .viewer { display: none; }
+    .fallback {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      color: var(--muted);
+    }
+    .fallback p { margin: 0; }
+  }
+</style>
