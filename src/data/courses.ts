@@ -21,12 +21,14 @@ export interface Institution {
 export const currentCourses: Course[] = [
   {
     title: "Markets and Information",
+    level: "Undergraduate",
     description:
       "How do individuals and firms make decisions and how, through market interaction, do these decisions determine the allocation of resources in society? In this course, students will learn what the main forces shaping market outcomes are. There will be in-depth discussions of the effects of government intervention and the situations in which governments can improve overall welfare due to market imperfections.",
     syllabus: "/syllabi/markets.pdf",
   },
   {
     title: "Behavioral Economics",
+    level: "Undergraduate",
     description:
       "This course introduces students to the field of behavioral economics, which seeks to combine standard economic modeling with more psychologically plausible assumptions about human behavior. This is accomplished by making nonstandard assumptions about human preferences, exploring nonstandard beliefs, and emphasizing the limitations of our decision-making faculties.",
     syllabus: "/syllabi/behavioral-econ.pdf",  // add once he provides it
