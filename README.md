@@ -1,43 +1,50 @@
-# Astro Starter Kit: Minimal
+# Andrzej Baranski, Personal Academic Website
 
-```sh
-npm create astro@latest -- --template minimal
+Source code for the personal website of Andrzej Baranski, Associate Professor of Economics at New York University Abu Dhabi.
+
+**Live site:** https://www.abarmad.com
+
+Built with [Astro](https://astro.build) and deployed to GitHub Pages with GitHub Actions.
+
+## Tech stack
+
+- **Astro**, a static site generator that ships almost no JavaScript
+- **TypeScript** for the data files
+- **Plain CSS**, with colors and fonts defined as variables in `src/styles/global.css`
+- **Fontsource** for self-hosted fonts (Inter and Source Serif 4)
+- **GitHub Actions + GitHub Pages** for hosting
+
+## Project structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
+.
+├── .github/workflows/deploy.yml   # Build and deploy on every push to main
+├── public/                        # Served as-is at the site root
+│   ├── CNAME                      # Custom domain
+│   ├── cv.pdf                     # CV shown on the CV page
+│   ├── images/                    # Photo and logos
+│   ├── papers/                    # PDFs of published papers
+│   ├── working-papers/            # PDFs of working papers
+│   ├── syllabi/                   # Course syllabi
+│   └── data/                      # Replication data files
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── components/                # Header, Footer, PublicationList, CourseList
+│   ├── data/                      # Editable content (see below)
+│   │   ├── site.ts                # Name, roles, nav, affiliation logo
+│   │   ├── news.ts                # "Recent Highlights" on the home page
+│   │   ├── publications.ts        # Published, working, and in-progress papers
+│   │   └── courses.ts             # Current and previous teaching
+│   ├── layouts/Layout.astro       # Shared page layout and <head>
+│   ├── pages/                     # Each file becomes a URL
+│   │   ├── index.astro            # Home
+│   │   ├── research.astro
+│   │   ├── teaching.astro
+│   │   └── cv.astro
+│   └── styles/global.css          # Colors, fonts, base styles
+├── astro.config.mjs
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## License and ownership
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Site content (text, publications, images, CV) © Andrzej Baranski. All rights reserved.
