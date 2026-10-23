@@ -7,7 +7,7 @@ export const site = {
     "Associate Professor of Economics",
     "Director, Social Science Experimental Laboratory (SSEL)",
     "Director, Master's Program in Economics", 
-    "Affiliate Center for Behavioral Institutional Design (C-BID)"
+    "Affiliate, Center for Behavioral Institutional Design (C-BID)"
   ],
   description:
     "Associate Professor of Economics at NYU Abu Dhabi. Research on bargaining, collective decision-making, and experimental economics.",
