@@ -35,6 +35,12 @@ const relatedLinks = [
     href: "https://ssel.abudhabi.nyu.edu/",
     logo: "/images/ssel_logo.png",
   },
+  {
+    name: "LinkedIn Profile",
+    cta: "Visit my LinkedIn",
+    href: "https://www.linkedin.com/in/andrzej-baranski-a3bb403a5/",
+    logo: "/images/linkedin.png",
+  },
 ];
 ---
 <Layout>
@@ -46,7 +52,8 @@ const relatedLinks = [
         <p class="intro">
           I am an associate professor of economics at New York University Abu
           Dhabi, where I direct the Social Science Experimental Laboratory
-          (SSEL) and the cluster of Experimental Social Science. I build and
+          (<a href="https://ssel.abudhabi.nyu.edu/" target="_blank" rel="noopener">SSEL</a>)
+          and the cluster of Experimental Social Science. I build and
           test models to better understand phenomena such as multilateral
           bargaining, contracting, and incentive provision in groups. I study
           the trade-off between productive and rent-seeking activities that
@@ -96,7 +103,9 @@ const relatedLinks = [
         />
         <ul class="roles">
           {site.roles.map((role) => <li>{role}</li>)}
-          <li class="affiliation">{site.affiliation}</li>
+          <li class="affiliation">
+            <img src={site.affiliationLogo} alt={site.affiliation} />
+          </li>
         </ul>
 
         <section class="related" aria-labelledby="links-heading">
@@ -196,7 +205,7 @@ const relatedLinks = [
   .link-card img {
     display: block;
     width: calc(100% - 2.5rem);
-    max-width: 14rem;
+    max-width: 8rem;
     height: auto;
     margin: 1.25rem auto 1rem;
   }
@@ -241,6 +250,11 @@ const relatedLinks = [
     line-height: 1.65;
     color: var(--text);
     margin: 0 0 1rem;
+    /* justified, same as the bio paragraph: even left and right edges */
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
   .news-list {
     list-style: none; margin: 0; padding: 0;
@@ -315,8 +329,17 @@ const relatedLinks = [
     }
     .news h2 { font-size: 1.15rem; }
     .news-list h3 { font-size: 1.05rem; }
+    .news .body { text-align: left; hyphens: manual; }   /* justified text leaves gaps on narrow screens */
 
     .photo { max-width: 100%; }
     .link-card img { max-width: 100%; }
+  }
+
+  .roles .affiliation img {
+    display: block;
+    height: 7rem;
+    width: auto;
+    max-width: 100%;
+    margin-top: 0.75rem;
   }
 </style>
