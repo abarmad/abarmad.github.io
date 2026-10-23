@@ -50,10 +50,15 @@ a {
 }
 a:hover { text-decoration-thickness: 2px; }
 
+img, svg, video { max-width: 100%; height: auto; }
+
 .wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1.5rem; }
 .prose { max-width: var(--measure); }
 
-.page { padding: 3.5rem 0 5rem; }
+/* Top and bottom only: the left and right padding comes from .wrap.
+   (A shorthand "padding: 3.5rem 0 5rem" here would zero out the side padding
+   on elements that use both classes, which pushed text to the screen edges.) */
+.page { padding-block: 3.5rem 5rem; }
 .eyebrow {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
@@ -66,7 +71,7 @@ a:hover { text-decoration-thickness: 2px; }
 .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 1rem 0 2rem; list-style: none; }
 .tags li {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--heading);    /* darker text on the light blue bubbles */
   font-size: 0.9rem;
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
@@ -92,9 +97,8 @@ a:hover { text-decoration-thickness: 2px; }
   font-size: 0.95rem;
   font-weight: 500;
 }
-/* .button:hover { opacity: 0.9; } */
-
 .button:hover { background: var(--accent-dark); opacity: 1; }
-a:hover { color: var(--accent-dark); }
 
-.tags li { color: var(--heading); }   /* darker text on the light blue bubbles */
+a:hover { color: var(--accent-dark); }
+/* keep white text on buttons, since the link hover color above would override it */
+.button:hover { color: #fff; }

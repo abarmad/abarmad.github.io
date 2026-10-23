@@ -100,7 +100,7 @@ const relatedLinks = [
         </ul>
 
         <section class="related" aria-labelledby="links-heading">
-          <h2 id="links-heading">Learn More About the Lab </h2>
+          <h2 id="links-heading">Beyond This Page</h2>
           <ul class="link-list">
             {relatedLinks.map((l) => (
               <li>
@@ -132,7 +132,7 @@ const relatedLinks = [
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 20rem;
-    gap: 3rem;
+    gap: 5rem;                    /* space between the left column and the photo column */
     align-items: start;
     padding-right: 1.5rem;        /* pulls the photo column in from the right edge */
   }
@@ -144,6 +144,11 @@ const relatedLinks = [
     line-height: 1.65;
     color: var(--text);
     margin: 0 0 1.25rem;
+    /* justified: even left and right edges, like a block of text */
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
   .hero .tags { margin: 0 0 1rem; }
   .more { font-size: 0.95rem; }
@@ -268,5 +273,50 @@ const relatedLinks = [
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; gap: 1.5rem; padding-right: 0; }
     .photo { max-width: 16rem; }
+
+    /* Reorder for the single-column layout. "display: contents" dissolves the two
+       column wrappers so every piece becomes its own item in the .hero grid, and
+       "order" then sets the sequence. Change the numbers to rearrange. */
+    .hero-text,
+    .hero-side { display: contents; }
+    .hero > *,
+    .hero-text > *,
+    .hero-side > * { min-width: 0; }
+
+    .hero-text h1 { order: 1; margin-bottom: 0; }
+    .intro        { order: 2; margin: 0; }
+    .photo        { order: 3; }
+    .roles        { order: 4; margin: 0; }
+    .hero .tags   { order: 5; margin: 0; }
+    .more         { order: 6; justify-self: start; }
+    .news         { order: 7; margin: 0.5rem 0 0; }
+    .related      { order: 8; margin-top: 0.5rem; }
+  }
+
+  /* ---------- Phones ---------- */
+  @media (max-width: 600px) {
+    .page { padding-top: 1rem; }
+
+    /* let grid children shrink instead of pushing the page wider than the screen */
+    .hero > * { min-width: 0; }
+    .hero-text, .hero-side { overflow-wrap: anywhere; }
+
+    .intro {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      text-align: left;          /* justified text leaves big gaps on narrow screens */
+      hyphens: manual;
+    }
+
+    .news {
+      padding: 1.25rem 1.1rem 1.5rem;
+      margin-top: 2rem;
+      min-height: 0;
+    }
+    .news h2 { font-size: 1.15rem; }
+    .news-list h3 { font-size: 1.05rem; }
+
+    .photo { max-width: 100%; }
+    .link-card img { max-width: 100%; }
   }
 </style>

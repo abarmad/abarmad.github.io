@@ -16,66 +16,63 @@ import { currentCourses, previousTeaching } from "../data/courses";
       <section class="previous">
         <h2>Previous Teaching Experience</h2>
 
-        <div class="previous-body">
-          <div class="previous-text">
-            {previousTeaching.map((inst) => (
-              <div class="institution">
-                <h3 class="inst-name">
-                  {inst.name}
-                  {inst.period && <span class="period">{inst.period}</span>}
-                </h3>
-                <CourseList courses={inst.courses} />
-              </div>
-            ))}
-          </div>
+        {previousTeaching.map((inst) => (
+          <div class="institution">
+            <h3 class="inst-name">
+              {inst.name}
+              {inst.period && <span class="period">{inst.period}</span>}
+            </h3>
 
-          <figure class="teaching-photo">
-            <img
-              src="/images/teaching-photo.jpeg"
-              alt="Giving a lecture at Maastricht University"
-              loading="lazy"
-            />
-            <figcaption>
-              January 2018. Giving a lecture about “Reflections on Academic
-              Discourse” at Maastricht University.
-            </figcaption>
-          </figure>
-        </div>
+            <div class="inst-courses">
+              <CourseList courses={inst.courses} />
+            </div>
+
+            {inst.photo && (
+              <figure class="teaching-photo">
+                <img src={inst.photo.src} alt={inst.photo.alt} loading="lazy" />
+                <figcaption>{inst.photo.caption}</figcaption>
+              </figure>
+            )}
+          </div>
+        ))}
       </section>
     </div>
   </div>
 </Layout>
 
 <style>
-  /* Text keeps its ~39rem width; the extra room on the right holds the photo. */
+  /* Text keeps its ~50rem width; the extra room on the right holds the photo. */
   .prose {
     --photo-w: 26rem;
     --photo-gap: 5rem;
     max-width: calc(50rem + var(--photo-w) + var(--photo-gap));
   }
 
-  .institution { margin-top: 2rem; }
+  .prose > section { display: block; }
+
+  /* Current teaching reserves the same right-hand space as the photo column,
+     so every section has identical text widths. */
+  .current { padding-right: calc(var(--photo-w) + var(--photo-gap)); }
+
+  /* ---------- Each institution: courses on the left, its photo (if any) on the right ---------- */
+  .institution {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--photo-w);
+    column-gap: var(--photo-gap);
+    align-items: start;
+    margin-top: 2rem;
+  }
+  .previous .institution:first-of-type { margin-top: 0.5rem; }
+
+  .inst-name,
+  .inst-courses { grid-column: 1; }
   .inst-name { font-size: 1.35rem; margin-bottom: 0.25rem; }
   .period { margin-left: 0.6rem; font-family: var(--sans); font-size: 0.95rem; font-weight: 400; color: var(--muted); }
 
-  /* ---------- Previous teaching: text on the left, photo on the right ---------- */
-  /* the two sections stack in a single column; only the area under the
-     "Previous Teaching Experience" heading is split in two */
-  .prose > section { display: block; }
-  /* Current teaching reserves the same right-hand space as the photo column,
-     so both sections have identical text widths. */
-  .current { padding-right: calc(var(--photo-w) + var(--photo-gap)); }
-  .previous-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--photo-w);
-    gap: var(--photo-gap);
-    align-items: start;
-  }
-  .previous-body .institution:first-child { margin-top: 0.5rem; }
   .teaching-photo {
+    grid-column: 2;
+    grid-row: 1 / span 2;      /* sits beside the heading and the course list */
     margin: 0;
-    position: sticky;
-    top: 1.5rem;
   }
   .teaching-photo img {
     display: block;
@@ -91,10 +88,15 @@ import { currentCourses, previousTeaching } from "../data/courses";
     color: var(--muted);
   }
 
-  /* ---------- Smaller screens ---------- */
+  /* ---------- Smaller screens: one column, photo comes right after its institution's courses ---------- */
   @media (max-width: 800px) {
     .current { padding-right: 0; }
-    .previous-body { grid-template-columns: 1fr; gap: 1.5rem; }
-    .teaching-photo { position: static; max-width: 24rem; }
+    .institution { grid-template-columns: 1fr; }
+    .teaching-photo {
+      grid-column: 1;
+      grid-row: auto;
+      max-width: 24rem;
+      margin-top: 1.25rem;
+    }
   }
 </style>

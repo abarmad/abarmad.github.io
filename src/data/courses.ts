@@ -5,10 +5,17 @@ export interface Course {
   syllabus?: string;
 }
 
+export interface InstitutionPhoto {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
 export interface Institution {
   name: string;
   period?: string;
   courses: Course[];
+  photo?: InstitutionPhoto; // shown beside (desktop) or after (phone) this institution's courses
 }
 
 export const currentCourses: Course[] = [
@@ -37,6 +44,12 @@ export const previousTeaching: Institution[] = [
   {
     name: "Maastricht University",
     period: "2015–2018",
+    photo: {
+      src: "/images/teaching-photo.jpeg",
+      alt: "Giving a lecture at Maastricht University",
+      caption:
+        "January 2018. Giving a lecture about “Reflections on Academic Discourse” at Maastricht University.",
+    },
     courses: [
       {
         title: "Behavioral Economics",
