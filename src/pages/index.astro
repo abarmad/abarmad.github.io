@@ -2,13 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import { site } from "../data/site";
 import { news } from "../data/news";
+import { events } from "../data/events";
 
-const NEWS_TITLE = "Recent Highlights";
-const MAX_NEWS = 3;
+const PANEL_TITLE = "News";
+const ROTATE_SECONDS = 8;   // time each slide stays on screen
 
-const recent = [...news]
-  .sort((a, b) => b.date.localeCompare(a.date))
-  .slice(0, MAX_NEWS);
+// No limits: every news item and every upcoming event is shown.
+const recent = [...news].sort((a, b) => b.date.localeCompare(a.date));
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
@@ -16,6 +16,39 @@ const formatDate = (iso: string) =>
     year: "numeric",
     timeZone: "UTC",
   });
+
+// Upcoming events: hide anything whose last day has passed, soonest first.
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = events
+  .filter((e) => (e.endDate ?? e.date) >= today)
+  .sort((a, b) => a.date.localeCompare(b.date));
+
+const fmt = (iso: string, o: Intl.DateTimeFormatOptions) =>
+  new Date(iso).toLocaleDateString("en-US", { timeZone: "UTC", ...o });
+
+const dateLabel = (start: string, end?: string) => {
+  if (!end || end === start)
+    return fmt(start, { month: "long", day: "numeric", year: "numeric" });
+  const s = new Date(start);
+  const e = new Date(end);
+  const sameMonth =
+    s.getUTCMonth() === e.getUTCMonth() &&
+    s.getUTCFullYear() === e.getUTCFullYear();
+  if (sameMonth)
+    return `${fmt(start, { month: "long" })} ${s.getUTCDate()}–${e.getUTCDate()}, ${s.getUTCFullYear()}`;
+  return `${fmt(start, { month: "long", day: "numeric" })} – ${fmt(end, { month: "long", day: "numeric", year: "numeric" })}`;
+};
+
+// The rotating panel: ONE slide holding all upcoming events (scrollable),
+// followed by one slide per news item.
+type Slide =
+  | { kind: "events"; list: typeof upcoming }
+  | { kind: "news"; item: (typeof recent)[number] };
+
+const slides: Slide[] = [
+  ...(upcoming.length > 0 ? [{ kind: "events" as const, list: upcoming }] : []),
+  ...recent.map((item) => ({ kind: "news" as const, item })),
+];
 
 const topics = [
   "Collective Decision-Making",
@@ -66,28 +99,121 @@ const relatedLinks = [
         </ul>
         <a class="more" href="/research">See publications →</a>
 
-        {recent.length > 0 && (
-          <section class="news" aria-labelledby="news-heading">
-            <h2 id="news-heading">{NEWS_TITLE}</h2>
-            <ul class="news-list">
-              {recent.map((item) => (
-                <li>
-                  <p class="date">{formatDate(item.date)}</p>
-                  <h3>{item.title}</h3>
-                  {item.body &&
-                    item.body.split("\n\n").map((para) => (
-                      <p class="body">{para}</p>
-                    ))}
-                  {item.links && item.links.length > 0 && (
-                    <p class="links">
-                      {item.links.map((l) => (
-                        <a href={l.href} target="_blank" rel="noopener">{l.label}</a>
-                      ))}
-                    </p>
+        {slides.length > 0 && (
+          <section
+            class="news-panel"
+            data-news
+            style={`--interval: ${ROTATE_SECONDS}s`}
+            aria-labelledby="news-heading"
+            aria-roledescription="carousel"
+          >
+            <div class="progress" aria-hidden="true"><span class="progress-bar"></span></div>
+
+            <div class="panel-head">
+              <h2 id="news-heading">{PANEL_TITLE}</h2>
+              {slides.length > 1 && (
+                <p class="count" aria-hidden="true">
+                  <span data-current>1</span> / {slides.length}
+                </p>
+              )}
+            </div>
+
+            <div class="slides" data-slides aria-live="off">
+              {slides.map((s, i) => (
+                <article
+                  class={`slide${i === 0 ? " is-active" : ""}`}
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${slides.length}`}
+                >
+                  {s.kind === "events" ? (
+                    <>
+                      <p class="kind">
+                        Upcoming {s.list.length === 1 ? "event" : `events (${s.list.length})`}
+                      </p>
+                      <div
+                        class="events-scroll"
+                        tabindex="0"
+                        role="region"
+                        aria-label="Upcoming events, scrollable"
+                      >
+                        <ul class="events-list">
+                          {s.list.map((ev) => (
+                            <li class="event">
+                              <div class="event-date" aria-hidden="true">
+                                <span class="month">{fmt(ev.date, { month: "short" })}</span>
+                                <span class="day">{new Date(ev.date).getUTCDate()}</span>
+                              </div>
+                              <div class="event-body">
+                                <p class="when">
+                                  {dateLabel(ev.date, ev.endDate)}
+                                  {ev.type && <span class="type">{ev.type}</span>}
+                                </p>
+                                <h3>{ev.title}</h3>
+                                {ev.location && <p class="where">{ev.location}</p>}
+                                {ev.details && <p class="details">{ev.details}</p>}
+                                {ev.links && ev.links.length > 0 && (
+                                  <p class="links">
+                                    {ev.links.map((l) => (
+                                      <a href={l.href} target="_blank" rel="noopener">{l.label}</a>
+                                    ))}
+                                  </p>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p class="kind">Recent highlight</p>
+                      <p class="date">{formatDate(s.item.date)}</p>
+                      <h3>{s.item.title}</h3>
+                      {s.item.summary && <p class="summary">{s.item.summary}</p>}
+                      {s.item.body && (
+                        <details class="more-info">
+                          <summary>
+                            <span class="when-closed">Click for more information</span>
+                            <span class="when-open">Show less</span>
+                          </summary>
+                          <div class="more-body">
+                            {s.item.body.split("\n\n").map((para) => (
+                              <p class="body">{para}</p>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+                      {s.item.links && s.item.links.length > 0 && (
+                        <p class="links">
+                          {s.item.links.map((l) => (
+                            <a href={l.href} target="_blank" rel="noopener">{l.label}</a>
+                          ))}
+                        </p>
+                      )}
+                    </>
                   )}
-                </li>
+                </article>
               ))}
-            </ul>
+            </div>
+
+            {slides.length > 1 && (
+              <div class="controls">
+                <div class="dots" role="group" aria-label="Choose a news item">
+                  {slides.map((_, i) => (
+                    <button
+                      type="button"
+                      class="dot"
+                      aria-label={`Show item ${i + 1} of ${slides.length}`}
+                    ></button>
+                  ))}
+                </div>
+                <div class="buttons">
+                  <button type="button" class="ctl" data-prev aria-label="Previous item">‹</button>
+                  <button type="button" class="ctl" data-toggle aria-label="Pause automatic rotation">❚❚</button>
+                  <button type="button" class="ctl" data-next aria-label="Next item">›</button>
+                </div>
+              </div>
+            )}
           </section>
         )}
       </div>
@@ -134,6 +260,148 @@ const relatedLinks = [
   </div>
 </Layout>
 
+<script>
+  const root = document.querySelector<HTMLElement>("[data-news]");
+
+  if (root) {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>(".slide"));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>(".dot"));
+    const bar = root.querySelector<HTMLElement>(".progress-bar");
+    const live = root.querySelector<HTMLElement>("[data-slides]");
+    const current = root.querySelector<HTMLElement>("[data-current]");
+    const prev = root.querySelector<HTMLButtonElement>("[data-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-next]");
+    const toggle = root.querySelector<HTMLButtonElement>("[data-toggle]");
+    const drops = Array.from(root.querySelectorAll<HTMLDetailsElement>("details.more-info"));
+    const scrollers = Array.from(root.querySelectorAll<HTMLElement>(".events-scroll"));
+    const n = slides.length;
+
+    // Turns on the stacked, one-at-a-time layout (without JavaScript, all items just show in a list).
+    root.classList.add("is-ready");
+
+    if (n > 1 && bar && live && toggle && prev && next) {
+      let index = 0;
+      // Visitors who ask their device for reduced motion start with rotation paused.
+      let userPaused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let hovered = false;
+      let focused = false;
+      let reading = false;     // true while any "Click for more information" dropdown is open
+      let scrolling = false;   // true while someone is scrolling through the events list
+      let scrollTimer: number | undefined;
+
+      const applyState = () => {
+        const paused = userPaused || hovered || focused || reading || scrolling;
+        root.classList.toggle("is-paused", paused);
+        // Only announce slide changes to screen readers when they aren't changing on their own.
+        live.setAttribute("aria-live", paused ? "polite" : "off");
+        toggle.textContent = userPaused ? "▶" : "❚❚";
+        toggle.setAttribute(
+          "aria-label",
+          userPaused ? "Start automatic rotation" : "Pause automatic rotation"
+        );
+      };
+
+      // The progress bar's animation is the timer: when it ends, we move to the next item.
+      // Pausing the animation pauses the timer, so the two can never get out of sync.
+      const restartBar = () => {
+        bar.classList.remove("run");
+        void bar.offsetWidth; // forces the animation to restart
+        if (!userPaused) bar.classList.add("run");
+      };
+
+      const show = (i: number) => {
+        index = (i + n) % n;
+        // Close any open dropdown so a hidden slide never keeps the panel tall.
+        drops.forEach((d) => { d.open = false; });
+        reading = false;
+        // Send the events list back to the top, so it starts fresh next time.
+        scrollers.forEach((s) => { s.scrollTop = 0; });
+        window.clearTimeout(scrollTimer);
+        scrolling = false;
+        slides.forEach((s, k) => s.classList.toggle("is-active", k === index));
+        dots.forEach((d, k) => {
+          if (k === index) d.setAttribute("aria-current", "true");
+          else d.removeAttribute("aria-current");
+        });
+        if (current) current.textContent = String(index + 1);
+        restartBar();
+        applyState();
+      };
+
+      // Rotation stays paused for as long as someone has a dropdown open, so the
+      // text they are reading never changes underneath them.
+      drops.forEach((d) =>
+        d.addEventListener("toggle", () => {
+          reading = drops.some((x) => x.open);
+          if (!d.open) {
+            // Closing the dropdown means they are done reading: let go of any leftover
+            // hover or focus pause so the rotation carries on right away.
+            hovered = false;
+            focused = false;
+            const a = document.activeElement as HTMLElement | null;
+            if (a && root.contains(a) && a.tagName === "SUMMARY") a.blur();
+          }
+          applyState();
+        })
+      );
+
+      // Scrolling through the events list (including by touch, where there is no hover)
+      // holds the rotation for a few seconds after the last scroll movement.
+      scrollers.forEach((s) =>
+        s.addEventListener(
+          "scroll",
+          () => {
+            if (s.scrollTop === 0) return;   // ignore the reset to the top
+            scrolling = true;
+            applyState();
+            window.clearTimeout(scrollTimer);
+            scrollTimer = window.setTimeout(() => {
+              scrolling = false;
+              applyState();
+            }, 1000);
+          },
+          { passive: true }
+        )
+      );
+
+      bar.addEventListener("animationend", () => show(index + 1));
+      prev.addEventListener("click", () => show(index - 1));
+      next.addEventListener("click", () => show(index + 1));
+      dots.forEach((d, k) => d.addEventListener("click", () => show(k)));
+
+      toggle.addEventListener("click", () => {
+        userPaused = !userPaused;
+        if (!userPaused && !bar.classList.contains("run")) restartBar();
+        applyState();
+      });
+
+      // Hover only counts for a real mouse. On touch screens a tap would otherwise
+      // leave the panel "hovered" (and paused) until the next tap somewhere else.
+      root.addEventListener("pointerenter", (e) => {
+        if (e.pointerType === "mouse") { hovered = true; applyState(); }
+      });
+      root.addEventListener("pointerleave", (e) => {
+        if (e.pointerType === "mouse") { hovered = false; applyState(); }
+      });
+      // Focus only counts for keyboard navigation. Clicking a button with the mouse also
+      // focuses it, and that used to keep the panel paused forever after a click.
+      root.addEventListener("focusin", (e) => {
+        const t = e.target as HTMLElement;
+        if (t.matches(":focus-visible")) { focused = true; applyState(); }
+      });
+      root.addEventListener("focusout", (e) => {
+        if (!root.contains(e.relatedTarget as Node | null)) {
+          focused = false;
+          applyState();
+        }
+      });
+
+      show(0);
+      applyState();
+    }
+  }
+</script>
+
 <style>
   .page { padding-top: 2rem; }
 
@@ -176,6 +444,13 @@ const relatedLinks = [
   .roles { list-style: none; margin: 1.25rem 0 0; padding: 0; }
   .roles li { color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
   .roles .affiliation { color: var(--text); font-weight: 500; margin-top: 0.25rem; }
+  .roles .affiliation img {
+    display: block;
+    height: 5rem;                 /* change this number to resize the university logo */
+    width: auto;
+    max-width: 100%;
+    margin-top: 0.75rem;
+  }
 
   /* ---------- Related links (logo cards, in the side column) ---------- */
   .related {
@@ -190,7 +465,7 @@ const relatedLinks = [
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.9rem;
+    gap: 0.7rem;
   }
   .link-card {
     display: flex;
@@ -205,9 +480,11 @@ const relatedLinks = [
   .link-card img {
     display: block;
     width: calc(100% - 2.5rem);
-    max-width: 8rem;
+    max-width: 10rem;             /* logo size inside each card; raise to enlarge */
+    max-height: 3.5rem;
+    object-fit: contain;
     height: auto;
-    margin: 1.25rem auto 1rem;
+    margin: 0.8rem auto 0.7rem;
   }
   /* button-style bar so it reads as clickable */
   .cta {
@@ -215,10 +492,10 @@ const relatedLinks = [
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    padding: 0.7rem 1rem;
+    padding: 0.45rem 0.9rem;
     background: var(--accent);
     color: #fff;
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     font-weight: 600;
     transition: background 0.15s;
   }
@@ -230,22 +507,86 @@ const relatedLinks = [
     transform: translateY(-2px);
   }
   .link-card:hover .cta,
-  .link-card:focus-visible .cta { background: var(--accent-dark); }
+  .link-card:focus-visible .cta { background: var(--accent-dark, var(--accent)); }
   .link-card:hover .arrow,
   .link-card:focus-visible .arrow { transform: translateX(4px); }
 
-  /* ---------- News (stacked in the left column) ---------- */
-  .news {
+  /* ---------- News panel (events + highlights, rotating) ---------- */
+  .news-panel {
+    position: relative;
+    overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--line);
     border-left: 4px solid var(--accent);
     border-radius: 6px;
-    padding: 2rem 2.25rem 2.25rem;
+    padding: 1.75rem 2.25rem 1.5rem;
     margin: 2.5rem 0 0;
-    min-height: 24rem;
   }
-  .news h2 { margin: 0 0 1.25rem; font-size: 1.3rem; }
-  .news .body {
+  .panel-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+  }
+  .news-panel h2 { margin: 0; font-size: 1.3rem; }
+  .count { margin: 0; font-size: 0.85rem; color: var(--muted); }
+
+  /* progress bar along the top edge: its animation doubles as the rotation timer */
+  .progress { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .progress-bar {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .progress-bar.run { animation: news-fill var(--interval, 8s) linear forwards; }
+  .is-paused .progress-bar { animation-play-state: paused; }
+  @keyframes news-fill { to { transform: scaleX(1); } }
+
+  /* Without JavaScript every item just shows in a list. */
+  .slide + .slide {
+    border-top: 1px solid var(--line);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+  /* With JavaScript, items are stacked in one grid cell so the panel is always
+     as tall as its tallest item and nothing jumps when it rotates. */
+  .is-ready .slides { display: grid; }
+  .is-ready .slide {
+    grid-area: 1 / 1;
+    align-self: start;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  }
+  .is-ready .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.4s ease, visibility 0s;
+  }
+
+  .kind {
+    margin: 0 0 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .slide h3 { margin: 0 0 0.6rem; font-size: 1.2rem; }
+  .slide p { margin: 0 0 0.6rem; }
+  .date {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .slide .body {
     font-size: 1rem;
     line-height: 1.65;
     color: var(--text);
@@ -256,23 +597,42 @@ const relatedLinks = [
     hyphens: auto;
     -webkit-hyphens: auto;
   }
-  .news-list {
-    list-style: none; margin: 0; padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .slide .summary { color: var(--text); line-height: 1.6; }
+
+  /* "Click for more information" dropdown */
+  .more-info { margin: 0.25rem 0 0; }
+  .more-info summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.85rem 0.3rem 0.7rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
   }
-  .news-list h3 { margin: 0 0 0.75rem; font-size: 1.2rem; }
-  .news-list p { margin: 0 0 0.6rem; }
-  .date {
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
+  .more-info summary::-webkit-details-marker { display: none; }
+  .more-info summary::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-1px) rotate(45deg);   /* chevron pointing down */
+    transition: transform 0.2s ease;
   }
-  details { margin-bottom: 0.5rem; }
-  summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
-  details p { margin-top: 0.6rem; color: var(--muted); font-size: 0.95rem; }
+  .more-info[open] summary::before { transform: translateY(1px) rotate(-135deg); }   /* points up when open */
+  .more-info summary:hover { background: var(--accent); color: #fff; }
+  .more-info summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .more-info .when-open { display: none; }
+  .more-info[open] .when-open { display: inline; }
+  .more-info[open] .when-closed { display: none; }
+  .more-body { margin-top: 0.9rem; }
+
   .links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0 0 !important; }
   .links a {
     font-size: 0.85rem;
@@ -282,6 +642,122 @@ const relatedLinks = [
     text-decoration: none;
   }
   .links a:hover { background: var(--accent); color: #fff; }
+
+  /* ---------- Events slide: fixed height, scrolls when there are many ---------- */
+  .events-scroll {
+    max-height: 15rem;            /* the slide's fixed height; raise or lower to taste */
+    overflow-y: auto;
+    padding-right: 0.9rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--line);
+  }
+  .events-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .events-scroll::-webkit-scrollbar { width: 8px; }
+  .events-scroll::-webkit-scrollbar-track { background: var(--line); border-radius: 999px; }
+  .events-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 999px; }
+  .events-list { list-style: none; margin: 0; padding: 0; }
+  .events-list .event + .event {
+    margin-top: 1.1rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  /* one event */
+  .event {
+    display: grid;
+    grid-template-columns: 4.25rem 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .event-date {
+    text-align: center;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.5rem 0.25rem 0.4rem;
+    line-height: 1.1;
+  }
+  .event-date .month {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .event-date .day {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--heading, var(--text));
+  }
+  .event-body > * { margin: 0 0 0.3rem; }
+  .event h3 { margin: 0 0 0.25rem; font-size: 1.15rem; }
+  .event .when {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .event .type {
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0 0.6rem;
+    background: var(--accent-soft);
+    color: var(--heading, var(--accent));
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  .event .where { color: var(--muted); }
+  .event .details { font-size: 0.95rem; }
+
+  /* controls: dots on the left, arrows and pause on the right */
+  .controls {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .is-ready .controls { display: flex; }
+  .dots { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    padding: 0;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+  .dot[aria-current="true"] { background: var(--accent); }
+  .buttons { display: flex; gap: 0.4rem; }
+  .ctl {
+    min-width: 2.1rem;
+    height: 2.1rem;
+    padding: 0 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--heading, var(--text));
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .ctl:hover { border-color: var(--accent); color: var(--accent); }
+  .dot:focus-visible,
+  .ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .is-ready .slide,
+    .is-ready .slide.is-active { transition: none; }
+    .progress-bar { opacity: 0; }   /* hidden, but it still works as the timer */
+  }
 
   /* ---------- Smaller screens ---------- */
   @media (max-width: 900px) {
@@ -303,7 +779,7 @@ const relatedLinks = [
     .roles        { order: 4; margin: 0; }
     .hero .tags   { order: 5; margin: 0; }
     .more         { order: 6; justify-self: start; }
-    .news         { order: 7; margin: 0.5rem 0 0; }
+    .news-panel   { order: 7; margin: 0.5rem 0 0; }
     .related      { order: 8; margin-top: 0.5rem; }
   }
 
@@ -322,24 +798,14 @@ const relatedLinks = [
       hyphens: manual;
     }
 
-    .news {
-      padding: 1.25rem 1.1rem 1.5rem;
-      margin-top: 2rem;
-      min-height: 0;
-    }
-    .news h2 { font-size: 1.15rem; }
-    .news-list h3 { font-size: 1.05rem; }
-    .news .body { text-align: left; hyphens: manual; }   /* justified text leaves gaps on narrow screens */
+    .news-panel { padding: 1.5rem 1.1rem 1.25rem; margin-top: 2rem; }
+    .news-panel h2 { font-size: 1.15rem; }
+    .slide h3 { font-size: 1.05rem; }
+    .slide .body { text-align: left; hyphens: manual; }   /* justified text leaves gaps on narrow screens */
+    .event { grid-template-columns: 3.5rem 1fr; gap: 0.9rem; }
+    .events-scroll { max-height: 17rem; padding-right: 0.6rem; }
 
     .photo { max-width: 100%; }
     .link-card img { max-width: 100%; }
-  }
-
-  .roles .affiliation img {
-    display: block;
-    height: 7rem;
-    width: auto;
-    max-width: 100%;
-    margin-top: 0.75rem;
   }
 </style>

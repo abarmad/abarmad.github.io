@@ -6,8 +6,9 @@ export interface NewsLink {
 export interface NewsItem {
   date: string; // YYYY-MM-DD
   title: string;
-  body?: string; // separate paragraphs with a blank line (\n\n)
-  links?: NewsLink[];
+  summary?: string; // one or two sentences, always visible under the title
+  body?: string; // shown in the "Click for more information" dropdown; separate paragraphs with a blank line (\n\n)
+  links?: NewsLink[]; // always visible below the dropdown
 }
 
 // Add new items anywhere in the list. The home page sorts them by date
@@ -16,6 +17,8 @@ export const news: NewsItem[] = [
   {
     date: "2026-10-01", // change to the real announcement date
     title: "New tool: Communication Annotation Tool (CAT)",
+    summary:
+      "A browser-based platform that helps experimental social scientists analyze free-form communication using large language models, with no programming or API expertise needed.",
     body:
       "We are pleased to introduce the Communication Annotation Tool (CAT), a browser-based platform that helps experimental social scientists analyze free-form communication using large language models. CAT enables researchers to create flexible coding manuals, annotate messages or complete conversations using multiple LLMs, assess coding reliability, review problematic cases, and generate replication-ready datasets and documentation (all without programming or API expertise).\n\n" +
       "CAT is designed to make rigorous content analysis faster, more affordable, transparent, and reproducible. A guided tutorial and video are available on the CAT website.\n\n" +

@@ -18,16 +18,51 @@ const { items } = Astro.props;
           {p.status && <span class="status">{p.status}</span>}
         </p>
       )}
-      {p.links && p.links.length > 0 && (
-        <p class="links">
-          {p.links.map((l) => (
+
+      {((p.links && p.links.length > 0) || p.abstract) && (
+        <div class="actions">
+          {p.links && p.links.map((l) => (
             <a href={l.href} target="_blank" rel="noopener">{l.label}</a>
           ))}
-        </p>
+          {p.abstract && (
+            <button type="button" class="abs-toggle" aria-expanded="false">
+              <span class="label">abstract</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {p.abstract && (
+        <div class="abstract-body">
+          {p.abstract.split("\n\n").map((para) => <p>{para}</p>)}
+        </div>
       )}
     </li>
   ))}
 </ul>
+
+<script>
+  // Turns each abstract into a dropdown. Without JavaScript the abstract is simply
+  // shown in full and the button stays hidden, so nothing is ever out of reach.
+  document.querySelectorAll<HTMLElement>(".pubs").forEach((list) => {
+    list.classList.add("is-ready");
+
+    list.querySelectorAll<HTMLButtonElement>(".abs-toggle").forEach((btn) => {
+      const body = btn.closest("li")?.querySelector<HTMLElement>(".abstract-body");
+      const label = btn.querySelector<HTMLElement>(".label");
+      if (!body || !label) return;
+
+      body.hidden = true;
+
+      btn.addEventListener("click", () => {
+        const opening = body.hidden;
+        body.hidden = !opening;
+        btn.setAttribute("aria-expanded", String(opening));
+        label.textContent = opening ? "Hide abstract" : "Click to read the abstract";
+      });
+    });
+  });
+</script>
 
 <style>
   .pubs { list-style: none; margin: 0; padding: 0; }
@@ -51,13 +86,66 @@ const { items } = Astro.props;
     border-radius: 999px;
     font-size: 0.8rem;
   }
-  .links { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .links a {
+
+  /* ---------- PDF / Data buttons and the abstract button share one row ---------- */
+  .actions {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .actions a,
+  .abs-toggle {
+    font: inherit;
     font-size: 0.85rem;
+    line-height: inherit;
     padding: 0.15rem 0.7rem;
     border: 1px solid var(--accent);
     border-radius: 999px;
+    background: transparent;
+    color: var(--accent);
     text-decoration: none;
   }
-  .links a:hover { background: var(--accent); color: #fff; }
+  .actions a:hover,
+  .abs-toggle:hover { background: var(--accent); color: #fff; }
+
+  .abs-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+  }
+  .abs-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .abs-toggle::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-1px) rotate(45deg);   /* chevron pointing down */
+    transition: transform 0.2s ease;
+  }
+  .abs-toggle[aria-expanded="true"]::before { transform: translateY(1px) rotate(-135deg); }   /* points up when open */
+
+  /* the button only appears once JavaScript is ready to make it work */
+  .pubs:not(.is-ready) .abs-toggle { display: none; }
+
+  /* ---------- Abstract text ---------- */
+  .abstract-body { margin-top: 0.8rem; max-width: 52rem; }
+  .abstract-body p {
+    font-size: 0.97rem;
+    line-height: 1.65;
+    color: var(--text);
+    margin: 0 0 0.8rem;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  .abstract-body p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 600px) {
+    .abstract-body p { text-align: left; hyphens: manual; }   /* justified text leaves gaps on narrow screens */
+  }
 </style>
