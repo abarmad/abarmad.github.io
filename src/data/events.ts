@@ -21,14 +21,14 @@ export const events: EventItem[] = [
     title: "ESA North America",
     type: "Paper",
     location: "Charlottesville, Virginia, USA",
-    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributers",
+    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
   },
   {
     date: "2026-11-02", // REPLACE this sample with a real event
     title: "Universidad Francisco Marroquín",
     type: "Paper",
     location: "Ciudad de Guatemala, Guatemala",
-    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributers",
+    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
   },
   {
     date: "2026-11-12", // REPLACE this sample with a real event
@@ -39,7 +39,7 @@ export const events: EventItem[] = [
   },
   {
     date: "2027-01-04", // REPLACE this sample with a real event
-    title: "ASSA ESA Session on Experiments on Bounded Ratinality and Communication",
+    title: "ASSA ESA Session on Experiments on Bounded Rationality and Communication",
     type: "Talk",
     location: "Washington DC, USA",
     details: "Guest Talk: Are teams more rational than individuals? A meta-study and new experiments",
