@@ -1,0 +1,193 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right" xmlns="http://www.w3.org/1999/html">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+    <br>
+</div>
+    {% if player.treatment == 'competitive' %}
+    <h2 class="fw-bold" style="text-align: center">Competitive Market Experiment</h2>
+    {% else %}
+    <h2 class="fw-bold" style="text-align: center">Uniform Double Auction</h2>
+    {% endif %}
+{{ endblock }}
+
+{{ block content }}
+
+<div class="container mt-3">
+    <div style="display: none;">
+        {{ formfield 'player_name' }}
+    </div>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i> Objective</h5>
+            <p class="text-muted mb-0">You will participate in a market as a buyer or seller. Your goal is to <b>maximize your profit</b>.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-4">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; margin-bottom: 1.05rem !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i> Your Role</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 ps-0" style="text-align: justify">
+                            Your role is randomly assigned.
+                            You keep your role for the first {{halfRound}} rounds, then switch for the next {{halfRound}} rounds.
+                        </li>
+                    </ul>
+                    <ul style="line-height: 2;">
+                        <li class="border-0">
+                            <strong>Buyers</strong> receive a private value (maximum willingness to pay).
+                        </li>
+                        <li class="border-0">
+                            <strong>Sellers</strong> receive a private cost (minimum acceptable price).
+                        </li>
+                    </ul>
+                    <br>
+                    <h5 class="fw-bold mb-3" style="color: indigo">Step 1: Submit Your Bid / Ask</h5>
+                    <ul style="line-height: 2;">
+                        <li class="border-0">
+                            <strong>Buyers</strong> submit one bid price: how much they are willing to pay.
+                        </li>
+
+                        <li class="border-0">
+                            <strong>Sellers</strong> submit one ask price: the price they want to be paid.
+                        </li>
+                    </ul>
+                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Step 2: Market Clearing</h5>
+                    <p>After all submissions:</p>
+                    <ul style="line-height: 2;">
+                        <li>Bids are ranked from highest to lowest.</li>
+                        <li>Asks are ranked from lowest to highest.</li>
+                        <li>The highest buyer is matched with the lowest seller.</li>
+                        <li>The second-highest buyer is matched with the second-lowest seller.</li>
+                        <li>A match is successful only if the buyer's bid is greater than or equal to the seller's ask.</li>
+                        <li>This process of matching continues until the buyer's bid is lower than the seller's ask.</li>
+                    </ul>
+
+
+                    <h5 class="fw-bold" style="color: indigo">Step 3: Market Price</h5>
+                    <p style="text-align: justify">How much will you pay as a buyer? How much will you receive as a seller? A <b>single market
+                        price</b> will be calculated on the basis of all submitted bids and asks. All trades occur at the same price.
+                        The price is calculated in this manner:</p>
+                    <ul style="line-height: 2;">
+                        <li>Look at the <b>last successful match</b>.</li>
+                        <li>Take the buyer's bid and the seller's ask in that match.</li>
+                        <li>The market price is the average of these two numbers.</li>
+                    </ul>
+
+                    <div class="p-3 border mb-3" style="border-radius: 1.45rem !important; background-color:lightgoldenrodyellow;">
+                        <p class="mb-1"> <strong>Example of a Market Price:</strong></p>
+                        <p class="small mb-0"><b>Bids:</b> 100, 90, 80, 70 <br>
+                            <b>Asks:</b> 20, 40, 60, 85</p>
+                        <ul class="small">
+                            <li>100 ≥ 20 (match)</li>
+                            <li>90 ≥ 40 (match)</li>
+                            <li>80 ≥ 60 (match)</li>
+                            <li>70 < 85 (stop)</li>
+                        </ul>
+
+                        <p class="small mb-0">
+                            The number of trades is 3. The last matched bid: 80 Last matched ask: 60. The market
+price is the average: (60 + 80) / 2 = 70.
+                        </p>
+                    </div>
+                    <h5 class="fw-bold mt-3" style="color: indigo">Step 4: Trading Profits</h5>
+                    <p>If you are selected among the matched traders, you will trade at the market price.</p>
+                    <ul style="line-height: 2;">
+                        <li><p class="mb-1"><strong>Buyer profit =</strong>  Value − Market Price</p></li>
+                        <li><p class="mb-1"><strong>Seller profit =</strong> Market Price − Cost</p></li>
+                    </ul>
+
+                    <p>If you do not trade, your profit is zero.</p>
+
+                    {% if player.treatment == 'competitive' %}
+                    <h5 class="fw-bold mt-3" style="color: indigo">Step 5: Final Profits</h5>
+                    <p style="text-align: justify">
+                    In this market, if <b>every buyer buys a good</b>, every person in the market will receive <b>10 additional points</b>.
+                    </p>
+                    <ul style="line-height: 2;">
+                        <li><strong>Final Buyer profit</strong> = Value − Market Price + (10 points if everyone buys)</li>
+                        <li><strong>Final Seller profit</strong> = Market Price − Cost + (10 points if everyone buys)</li>
+                    </ul>
+                    {% endif %}
+                    <br>
+                    <h5 class="text-muted fw-bold mt-3">Multiple Rounds</h5>
+                        <p style="text-align: justify">
+                            The experiment will be repeated for several {{numRounds}} rounds. You will keep your role for the first {{ halfRound }} rounds.
+                            Then, you will switch roles for the next {{halfRound}} rounds. Try to improve your decisions based on previous outcomes.
+                            At the end, we will add all your profits and show a ranking of performance in the experiment.
+                        </p>
+
+
+                </div>
+
+
+            </div>
+            <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+                <h6 class="fw-bold"><i class="bi bi-lightbulb"></i> Strategy Tips</h6>
+                <ul class="mb-0" style="line-height: 2;">
+                    <li>Buyers: Do not bid above your value (you will lose money)</li>
+                    <li>Sellers: Do not ask below your cost (you will lose money)</li>
+                    <li>Consider how your decision affects your chance of trading</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#nameModal" style="border-radius: 10px;">
+            Begin Experiment
+        </button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="nameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Participant Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted mb-3">Please enter your player name:</p>
+                <input type="text" id="modal-name-input" class="form-control form-control-lg" placeholder="Your Name" style="border-radius: 10px;">
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" onclick="submitName()" class="btn btn-primary w-100 py-2" style="border-radius: 10px;">Start Experiment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitName() {
+        const nameInput = document.getElementById('modal-name-input');
+        const nameVal = nameInput.value.trim();
+
+        if (nameVal === "") {
+            alert("Please enter a name to continue. The name cannot be empty or consist only of spaces.");
+        } else {
+            // Transfer modal value to hidden oTree field
+            document.getElementsByName('player_name')[0].value = nameVal;
+            // Submit the oTree form
+            document.getElementById('form').submit();
+        }
+    }
+</script>
+
+
+<style>
+    body { background-color: #f8f9fa; }
+    .list-group-item { background: transparent; }
+    .otree-footer, .footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+{{ endblock }}

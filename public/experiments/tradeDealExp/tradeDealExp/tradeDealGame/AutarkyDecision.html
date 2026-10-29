@@ -1,0 +1,302 @@
+{% extends "global/Page.html" %}
+
+{% block content %}
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body, .otree-body {
+    /* background: #f5f3ff !important; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  /* ── TOP BAR ── */
+  .neg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e1245;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 16px rgba(30,18,69,.18);
+  }
+  .neg-header .title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+  .neg-header .role-block { text-align: center; }
+  .neg-header .role-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    margin-bottom: 3px;
+  }
+  .neg-header .role-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 15px rgba(30,18,69,.07);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* ── INSTRUCTION TEXT ── */
+  .instruction-text {
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .instruction-text strong { color: #1e1245; }
+
+  /* ── PRODUCTION TABLE ── */
+  .prod-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .prod-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .prod-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+  }
+  .prod-table tr:last-child td { border-bottom: none; }
+  .prod-table tr:hover td { background: #f8fafc; }
+
+  /* ── UTILITY CARD ── */
+  .utility-card {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(124,58,237,.25);
+  }
+  .utility-card .utility-heading {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 4px;
+  }
+  .utility-card .utility-formula {
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+  }
+  .utility-card #utility {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+
+  /* ── PLAN SLIDER ── */
+  .plan-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #7c3aed 0%, #7c3aed calc((var(--val,1) - 1)/5 * 100%), #e2e8f0 calc((var(--val,1) - 1)/5 * 100%));
+    outline: none;
+    cursor: pointer;
+    margin: 10px 0 14px;
+  }
+  .plan-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #7c3aed;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(124,58,237,.4);
+    cursor: pointer;
+  }
+  .plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #475569;
+  }
+  .plan-badge strong {
+    display: inline-block;
+    background: #7c3aed;
+    color: #fff;
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  /* ── SUBMIT ── */
+  .submit-area {
+    text-align: center;
+    margin-top: 8px;
+  }
+  .btn-submit {
+    background: #1e1245;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 36px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    box-shadow: 0 2px 8px rgba(30,18,69,.2);
+  }
+  .btn-submit:hover { background: #0f172a; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+</style>
+
+<!-- ══ TOP BAR ══ -->
+<div class="neg-header">
+  <div class="title">Pre-Negotiation Phase</div>
+  <div class="role-block">
+    <div class="role-label">Assigned Role</div>
+    <div class="role-name">Country {{ country }}</div>
+  </div>
+  <!-- empty right side keeps flex spacing balanced -->
+  <div style="width: 120px;"></div>
+</div>
+
+<!-- Instruction -->
+<div class="card">
+  <p class="card-title">Your Task</p>
+  <p class="instruction-text">
+    Before negotiating a trade deal, select the production plan that maximises your utility
+    <strong>in the absence of trade (autarky)</strong>.
+  </p>
+</div>
+
+<!-- Production Table -->
+<div class="card">
+  <p class="card-title">Possible Production Plans</p>
+  <table class="prod-table">
+    <thead>
+      <tr>
+        <th>Plan</th>
+        <th>Clothes</th>
+        <th>Food</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in plan_table %}
+      <tr>
+        <td><strong>{{ row.plan }}</strong></td>
+        <td>{{ row.clothes }}</td>
+        <td>{{ row.food }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Utility -->
+<div class="utility-card">
+  <div>
+    <div class="utility-heading">Current Utility</div>
+    <div class="utility-formula">5 × min(Clothes, Food)</div>
+  </div>
+  <div id="utility">0</div>
+</div>
+
+<!-- Plan Selection -->
+<div class="card">
+  <p class="card-title">Select Your Production Plan</p>
+  <input
+    class="plan-slider"
+    type="range"
+    name="autarky_plan"
+    min="1" max="6" step="1" value="1"
+    id="planSlider"
+    style="--val:1"
+    oninput="updateSliderValue(this.value); sendLiveData();">
+  <div class="plan-badge">
+    Selected Plan: <strong><span id="sliderValue">1</span></strong>
+  </div>
+</div>
+
+<!-- Submit -->
+<div class="submit-area">
+  <button class="btn-submit">Continue</button>
+</div>
+
+<!-- ══ SCRIPTS (all original logic preserved exactly) ══ -->
+<script>
+function updateSliderValue(val) {
+    document.getElementById("sliderValue").innerText = val;
+    document.getElementById("planSlider").style.setProperty("--val", val);
+}
+</script>
+
+<script>
+function sendLiveData() {
+    let data = {
+        autarky_plan: document.querySelector('[name="autarky_plan"]').value
+    };
+    liveSend(data);
+}
+</script>
+
+<script>
+function liveRecv(data) {
+    const utilEl = document.getElementById("utility");
+    utilEl.style.transform = "scale(1.15)";
+    utilEl.style.opacity = "0.7";
+    setTimeout(() => {
+        utilEl.innerText = data.utility;
+        utilEl.style.transform = "scale(1)";
+        utilEl.style.opacity = "1";
+    }, 80);
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    sendLiveData();
+});
+</script>
+
+{% endblock %}

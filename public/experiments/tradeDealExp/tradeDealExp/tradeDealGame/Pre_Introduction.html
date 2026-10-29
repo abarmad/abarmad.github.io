@@ -1,0 +1,40 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block content %}
+
+
+
+<div style="text-align:center;">
+    <img src="/static/images/SSEL_Logo.png"
+         style="width:350px; height:auto; display:block; margin:0 auto;">
+    
+    <br>
+    <h4 style="margin-top:20px;">
+        Welcome to the Social Science Experimental Laboratory!
+    </h4>
+</div>
+
+<div style="max-width:695px; margin:30px auto; text-align:left;">
+    <p>
+    In this laboratory we conduct research on <strong>human behavior</strong>. Your participation today is <strong>not for research purposes</strong>, only for <strong>teaching purposes</strong>.
+    </p>
+
+    <p>
+    In a typical research experiment you would receive <strong>compensation</strong> for participation. For today, your choices are <strong>hypothetical</strong> but please <strong>take them seriously</strong>.
+    </p>
+
+
+
+</div>
+
+<div style="text-align:center;">
+
+    {% next_button %}
+
+</div>
+
+
+
+{% endblock %}
+

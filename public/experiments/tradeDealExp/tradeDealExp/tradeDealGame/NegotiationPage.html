@@ -1,0 +1,535 @@
+{% extends "global/Page.html" %}
+
+{% block content %}
+
+
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body, .otree-body {
+    /* background: #f5f3ff !important; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  /* ── TOP BAR ── */
+  .neg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e1245;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 16px rgba(30,18,69,.18);
+  }
+  .neg-header .title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+  .neg-header .role-block {
+    text-align: center;
+  }
+  .neg-header .role-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+    margin-bottom: 3px;
+  }
+  .neg-header .role-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .neg-header .timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .neg-header .timer-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #c4b5fd;
+  }
+  .neg-header #timer {
+    font-size: 22px;
+    font-weight: 800;
+    color: #f5f3ff;
+    font-variant-numeric: tabular-nums;
+    transition: color .3s;
+  }
+  .neg-header #timer.urgent { color: #fbbf24; }
+
+  /* ── TIME WARNING ── */
+
+
+  #timeWarning {
+    color: #991b1b;
+    background: #fff1f2;
+    border: 2px solid #f87171;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    display: none;
+    margin-bottom: 18px;
+  }
+  #timeWarning.visible { display: block; }
+
+  /* ── LAYOUT ── */
+  .neg-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 15px rgba(30,18,69,.07);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* ── PRODUCTION TABLE ── */
+  .prod-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .prod-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .prod-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+  }
+  .prod-table tr:last-child td { border-bottom: none; }
+  .prod-table tr:hover td { background: #f8fafc; }
+
+  /* ── UTILITY CARD ── */
+  .utility-card {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(124,58,237,.25);
+  }
+  .utility-card .utility-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .utility-card .utility-heading {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+  }
+  .utility-card .utility-formula {
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+  }
+  .utility-card #utility {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  #errorMessage {
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 6px;
+    min-height: 18px;
+    display: block;
+  }
+
+  /* ── BOTTOM ROW (Plan + Trade) ── */
+  .decisions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  /* ── PLAN SLIDER ── */
+  .plan-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #7c3aed 0%, #7c3aed calc((var(--val,1) - 1)/5 * 100%), #e2e8f0 calc((var(--val,1) - 1)/5 * 100%));
+    outline: none;
+    cursor: pointer;
+    margin: 10px 0 14px;
+  }
+  .plan-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #7c3aed;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(124,58,237,.4);
+    cursor: pointer;
+  }
+  .plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #475569;
+  }
+  .plan-badge strong {
+    display: inline-block;
+    background: #7c3aed;
+    color: #fff;
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  /* ── TRADE STEPPERS ── */
+  .trade-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .trade-row:last-child { border-bottom: none; }
+  .trade-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    min-width: 100px;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stepper button {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, border-color .15s;
+    padding: 0;
+  }
+  .stepper button:hover {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: #fff;
+  }
+  .stepper input[type="number"] {
+    width: 54px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 5px 4px;
+    outline: none;
+    font-family: inherit;
+    -moz-appearance: textfield;
+  }
+  .stepper input[type="number"]::-webkit-inner-spin-button,
+  .stepper input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .stepper input[type="number"]:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,.15);
+  }
+
+  /* ── CHAT PANEL ── */
+  .chat-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 15px rgba(30,18,69,.07);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 580px;
+  }
+  .chat-card .card-title { flex-shrink: 0; }
+  .chat-card .chat-inner { flex: 1; overflow: hidden; }
+
+  /* ── SUBMIT ── */
+  .submit-area {
+    margin-top: 14px;
+    text-align: right;
+  }
+  .btn-submit {
+    background: #1e1245;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    box-shadow: 0 2px 8px rgba(30,18,69,.2);
+  }
+  .btn-submit:hover { background: #0f172a; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+</style>
+
+<!-- ══ TOP BAR ══ -->
+<div class="neg-header">
+  <div class="title">Negotiation Phase</div>
+
+  <div class="role-block">
+    <div class="role-label">Assigned Role</div>
+    <div class="role-name">Country {{ country }}</div>
+  </div>
+
+  <div class="timer-block">
+    <div class="timer-label">Time Remaining</div>
+    <span id="timer">5:00</span>
+  </div>
+</div>
+
+<div id="timeWarning"></div>
+
+<!-- ══ MAIN GRID ══ -->
+<div class="neg-grid">
+
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- Production Table -->
+    <div class="card">
+      <p class="card-title">Possible Production Plans</p>
+      <table class="prod-table">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Clothes</th>
+            <th>Food</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in plan_table %}
+          <tr>
+            <td><strong>{{ row.plan }}</strong></td>
+            <td>{{ row.clothes }}</td>
+            <td>{{ row.food }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Utility -->
+    <div class="utility-card">
+      <div class="utility-meta">
+        <div class="utility-heading">Current Utility</div>
+        <div class="utility-formula">5 × min(Clothes, Food)</div>
+        <span id="errorMessage"></span>
+      </div>
+      <div id="utility">0</div>
+    </div>
+
+    <!-- Plan + Trade side by side -->
+    <div class="decisions-row">
+
+      <!-- Plan Selection -->
+      <div class="card">
+        <p class="card-title">Select Plan</p>
+        <input
+          class="plan-slider"
+          type="range"
+          name="selected_plan"
+          min="1" max="6" step="1" value="1"
+          id="planSlider"
+          style="--val:1"
+          oninput="updateSliderValue(this.value); sendLiveData();">
+        <div class="plan-badge">
+          Selected Plan: <strong><span id="sliderValue">1</span></strong>
+        </div>
+      </div>
+
+      <!-- Trade Decisions -->
+      <div class="card">
+        <p class="card-title">Trade Decisions</p>
+
+        <div class="trade-row">
+          <span class="trade-label">Clothes Import</span>
+          <div class="stepper">
+            <button type="button" onclick="changeValue('clothes_import', -1)">−</button>
+            <input type="number" id="clothes_import" name="clothes_import" value="0" min="0" max="15" oninput="sendLiveData()">
+            <button type="button" onclick="changeValue('clothes_import', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="trade-row">
+          <span class="trade-label">Clothes Export</span>
+          <div class="stepper">
+            <button type="button" onclick="changeValue('clothes_export', -1)">−</button>
+            <input type="number" id="clothes_export" name="clothes_export" value="0" min="0" max="15" oninput="sendLiveData()">
+            <button type="button" onclick="changeValue('clothes_export', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="trade-row">
+          <span class="trade-label">Food Import</span>
+          <div class="stepper">
+            <button type="button" onclick="changeValue('food_import', -1)">−</button>
+            <input type="number" id="food_import" name="food_import" value="0" min="0" max="15" oninput="sendLiveData()">
+            <button type="button" onclick="changeValue('food_import', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="trade-row">
+          <span class="trade-label">Food Export</span>
+          <div class="stepper">
+            <button type="button" onclick="changeValue('food_export', -1)">−</button>
+            <input type="number" id="food_export" name="food_export" value="0" min="0" max="15" oninput="sendLiveData()">
+            <button type="button" onclick="changeValue('food_export', 1)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: Chat + Submit -->
+  <div class="chat-card">
+    <p class="card-title">Chat</p>
+    <div class="chat-inner">
+      {{ chat nickname=nickname channel=group.id }}
+    </div>
+    <div class="submit-area">
+      <button class="btn-submit">Submit</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ SCRIPTS (all original logic preserved exactly) ══ -->
+<script>
+function updateSliderValue(val) {
+    document.getElementById("sliderValue").innerText = val;
+    // update CSS variable for gradient fill
+    document.getElementById("planSlider").style.setProperty("--val", val);
+}
+
+function changeValue(fieldId, delta) {
+    let input = document.getElementById(fieldId);
+    let current = parseInt(input.value) || 0;
+    let newValue = current + delta;
+    if (newValue >= 0) {
+        input.value = newValue;
+        sendLiveData();
+    }
+}
+
+function sendLiveData() {
+    let data = {
+        selected_plan: document.querySelector('[name="selected_plan"]').value,
+        clothes_import: document.getElementById("clothes_import").value,
+        clothes_export: document.getElementById("clothes_export").value,
+        food_import: document.getElementById("food_import").value,
+        food_export: document.getElementById("food_export").value
+    };
+    liveSend(data);
+}
+
+function liveRecv(data) {
+    const utilEl = document.getElementById("utility");
+    if (data.error) {
+        document.getElementById("errorMessage").innerText = data.error;
+        utilEl.innerText = "–";
+    } else {
+        document.getElementById("errorMessage").innerText = "";
+        // brief pop animation
+        utilEl.style.transform = "scale(1.15)";
+        utilEl.style.opacity = "0.7";
+        setTimeout(() => {
+            utilEl.innerText = data.utility;
+            utilEl.style.transform = "scale(1)";
+            utilEl.style.opacity = "1";
+        }, 80);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const deadline = {{ deadline_ms }};
+    const timerDisplay = document.getElementById("timer");
+    const warningMessage = document.getElementById("timeWarning");
+
+    let countdown = setInterval(function() {
+        let timeLeft = Math.round((deadline - Date.now()) / 1000);
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerDisplay.innerText = "0:00";
+            timerDisplay.classList.add("urgent");
+            warningMessage.innerText =
+                "Time has run out. You must submit your production plan and exports now.";
+            warningMessage.classList.add("visible");
+            return;
+        }
+
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+        if (timeLeft <= 30) {
+            timerDisplay.classList.add("urgent");
+        }
+    }, 1000);
+});
+</script>
+
+{% endblock %}

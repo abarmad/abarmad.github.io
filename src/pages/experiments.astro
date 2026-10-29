@@ -1,0 +1,569 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import Layout from "../layouts/Layout.astro";
+import { experiments } from "../data/experiments";
+
+// What every ZIP contains (shown in the intro section).
+const contents = [
+  {
+    name: "Paper instructions",
+    note: "The instructions for the experiment. Describes the roles, rules, rounds, and payoff structure(s).",
+  },
+  {
+    name: "oTree experiment",
+    note: "The folder with the oTree computer experiment, which students play on screen.",
+  },
+  {
+    name: "README",
+    note: "A read me file with notes for running the oTree experiment.",
+  },
+  {
+    name: "data_cleaning.py",
+    note: "A Python script that cleans the data you download from oTree after a session.",
+  },
+];
+
+// How to use the library (shown in the intro section).
+const steps = [
+  {
+    title: "Browse",
+    note: "Read each short description and its learning objectives to find an experiment that fits your class.",
+  },
+  {
+    title: "Learn more",
+    note: "Open an experiment to read the full description and preview the instructions.",
+  },
+  {
+    title: "Download",
+    note: "Get the ZIP, run the experiment in class with oTree, then clean the exported data with the script.",
+  },
+];
+
+const fmtSize = (bytes: number) =>
+  bytes >= 1048576
+    ? `${(bytes / 1048576).toFixed(1)} MB`
+    : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+
+// Builds a safe URL from a path inside public/experiments/ (handles spaces and accents).
+const url = (p: string) =>
+  "/experiments/" + p.split("/").map(encodeURIComponent).join("/");
+
+// Checks a file inside public/experiments/ at build time. Returns its size, and
+// prints a warning in the terminal if it is missing (never on the live site).
+const check = (rel: string) => {
+  const file = path.join("public", "experiments", rel);
+  if (!fs.existsSync(file)) {
+    console.warn(`[experiments] Missing file: ${file}`);
+    return 0;
+  }
+  return fs.statSync(file).size;
+};
+
+// Each experiment gets a list of preview buttons (one per instructions PDF)
+// and a list of download buttons (usually one shared ZIP).
+const items = experiments.map((e, i) => {
+  const previews = e.variants?.length
+    ? e.variants.map((v) => ({
+        label: v.label,
+        file: v.instructions,
+        title: `${e.title} (${v.label})`,
+      }))
+    : e.instructions
+      ? [{ label: "", file: e.instructions, title: e.title }]
+      : [];
+
+  const downloads = [
+    ...(e.zip
+      ? [
+          {
+            label: "",
+            zip: e.zip,
+            size: check(e.zip),
+            note: e.variants && e.variants.length > 1 ? "Includes all variants" : "",
+          },
+        ]
+      : []),
+    ...(e.variants ?? [])
+      .filter((v) => v.zip)
+      .map((v) => ({
+        label: v.label,
+        zip: v.zip as string,
+        size: check(v.zip as string),
+        note: "",
+      })),
+  ];
+
+  for (const p of previews) check(p.file);
+
+  const [first, ...rest] = e.description.split("\n\n");
+  return { ...e, id: `exp-${i}`, previews, downloads, first, rest };
+});
+
+const countLabel =
+  items.length === 1 ? "1 experiment" : `${items.length} experiments`;
+---
+<Layout
+  title="Experiments"
+  description="A library of experiments used for in-class learning, with instructions, oTree files, and data cleaning scripts."
+>
+  <div class="wrap page">
+    <header class="top">
+      <h1>Experiments</h1>
+      <p class="lede">
+        A library of experiments used for in-class learning. Each one puts
+        participants in an economic decision-making situation, so they can
+        experience an idea first-hand before it is discussed.
+      </p>
+      <p class="sub">
+        Everything needed to run an experiment is packaged in a ZIP file, built
+        for instructors who want to run it in their own class. Experiments that
+        come in several variants include all of them in the same ZIP, with a
+        separate set of instructions for each.
+      </p>
+    </header>
+
+    <section class="intro" aria-label="About this library">
+      <div class="col">
+        <h2>What's inside every ZIP</h2>
+        <ol class="contents">
+          {contents.map((c, i) => (
+            <li>
+              <span class="num" aria-hidden="true">{i + 1}</span>
+              <span class="txt">
+                <strong>{c.name}</strong>
+                <span>{c.note}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p class="aside">
+          New to oTree? It is a free, open-source platform for running
+          experiments in a browser. <a href="https://www.otree.org" target="_blank" rel="noopener">Learn more at otree.org</a>.
+        </p>
+      </div>
+
+      <div class="col">
+        <h2>How to use this library</h2>
+        <ol class="steps">
+          {steps.map((s) => (
+            <li>
+              <strong>{s.title}</strong>
+              <span>{s.note}</span>
+            </li>
+          ))}
+        </ol>
+        <p class="aside">
+          Click <em>Learn more</em> on any experiment to read its full
+          description, preview the participant instructions without
+          downloading anything, and get the files.
+        </p>
+      </div>
+    </section>
+
+    <section class="library" aria-labelledby="library-heading">
+      <div class="library-head">
+        <h2 id="library-heading">Available experiments</h2>
+        <p class="count">{countLabel}</p>
+      </div>
+
+      <div class="grid">
+        {items.map((e) => (
+          <article class="card">
+            <h3>{e.title}</h3>
+            <p class="desc">{e.first}</p>
+
+            {e.objectives && e.objectives.length > 0 && (
+              <div class="card-objectives">
+                <p class="label">Learning objectives</p>
+                <ul class="tags">
+                  {e.objectives.map((o) => <li>{o}</li>)}
+                </ul>
+              </div>
+            )}
+
+            <div class="card-foot">
+              {e.variants && e.variants.length > 1 && (
+                <span class="badge">{e.variants.length} variants</span>
+              )}
+              <button
+                type="button"
+                class="learn"
+                data-open={e.id}
+                aria-haspopup="dialog"
+                aria-label={`Learn more about ${e.title}`}
+              >
+                Learn more <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {items.length === 0 && <p>Experiments will be posted here soon.</p>}
+    </section>
+  </div>
+
+  <!-- One detail window per experiment: the full information lives here -->
+  {items.map((e) => (
+    <dialog class="detail-dlg" id={e.id} aria-labelledby={`${e.id}-title`}>
+      <div class="dlg-head">
+        <h2 id={`${e.id}-title`}>{e.title}</h2>
+        <button type="button" class="dlg-close" data-close aria-label="Close">✕</button>
+      </div>
+
+      <div class="dlg-body">
+        <p class="desc">{e.first}</p>
+        {e.rest.map((para) => <p class="desc">{para}</p>)}
+
+        {e.objectives && e.objectives.length > 0 && (
+          <>
+            <p class="label">Learning objectives</p>
+            <ul class="tags">
+              {e.objectives.map((o) => <li>{o}</li>)}
+            </ul>
+          </>
+        )}
+
+        {e.previews.length > 0 && (
+          <>
+            <p class="label">
+              {e.previews.length > 1 ? "Instructions (one for each variant)" : "Instructions"}
+            </p>
+            <div class="actions">
+              {e.previews.map((p) => (
+                <a
+                  class="preview"
+                  href={url(p.file)}
+                  target="_blank"
+                  rel="noopener"
+                  data-preview
+                  data-title={p.title}
+                >
+                  {p.label ? `Preview: ${p.label}` : "Preview instructions"}
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+
+        <p class="label">Download</p>
+        <div class="downloads">
+          {e.downloads.map((d) => (
+            <div class="actions">
+              <a class="download" href={url(d.zip)} download>
+                <span>{d.label ? `Download ZIP (${d.label})` : "Download ZIP"}</span>
+                {d.size > 0 && <span class="size">{fmtSize(d.size)}</span>}
+              </a>
+              {d.note && <span class="note">{d.note}</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </dialog>
+  ))}
+
+  <!-- One shared PDF preview window, opened on top of the detail window -->
+  <dialog class="preview-dlg" id="preview" aria-labelledby="preview-title">
+    <div class="dlg-head">
+      <h2 id="preview-title">Instructions</h2>
+      <div class="dlg-actions">
+        <a id="preview-open" href="#" target="_blank" rel="noopener">Open in new tab</a>
+        <button type="button" class="dlg-close" id="preview-close" aria-label="Close preview">✕</button>
+      </div>
+    </div>
+    <iframe id="preview-frame" title="Instructions preview"></iframe>
+  </dialog>
+</Layout>
+
+<script>
+  // ----- Detail windows (opened by the "Learn more" buttons) -----
+  document.querySelectorAll<HTMLButtonElement>("[data-open]").forEach((btn) => {
+    const dlg = document.getElementById(btn.dataset.open ?? "") as HTMLDialogElement | null;
+    if (!dlg) return;
+    btn.addEventListener("click", () => dlg.showModal());
+  });
+
+  document.querySelectorAll<HTMLDialogElement>("dialog.detail-dlg").forEach((dlg) => {
+    dlg.querySelector("[data-close]")?.addEventListener("click", () => dlg.close());
+    // Clicking the dimmed area outside the window closes it.
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+  });
+
+  // ----- PDF preview window (opens on top of the detail window) -----
+  const dlg = document.getElementById("preview") as HTMLDialogElement | null;
+  const frame = document.getElementById("preview-frame") as HTMLIFrameElement | null;
+  const title = document.getElementById("preview-title");
+  const openLink = document.getElementById("preview-open") as HTMLAnchorElement | null;
+  const closeBtn = document.getElementById("preview-close");
+
+  if (dlg && frame && title && openLink && closeBtn) {
+    document.querySelectorAll<HTMLAnchorElement>("a[data-preview]").forEach((a) => {
+      a.addEventListener("click", (e) => {
+        // On phones, embedded PDFs are unreliable, so just open the PDF in a new tab.
+        if (window.matchMedia("(max-width: 700px)").matches) return;
+        e.preventDefault();
+        title.textContent = `${a.dataset.title ?? "Experiment"}: instructions`;
+        openLink.href = a.href;
+        frame.src = `${a.href}#view=FitH`;
+        dlg.showModal();
+      });
+    });
+
+    closeBtn.addEventListener("click", () => dlg.close());
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+    // Unload the PDF when closed (Escape also lands here).
+    dlg.addEventListener("close", () => { frame.src = "about:blank"; });
+  }
+</script>
+
+<style>
+  /* ---------- Page top ---------- */
+  .top { max-width: 52rem; }
+  .top .lede { margin: 0 0 0.75rem; }
+  .top .sub { margin: 0; color: var(--muted); max-width: 46rem; }
+
+  /* ---------- Intro: what's inside + how to use ---------- */
+  .intro {
+    margin-top: 2rem;
+    padding: 1.6rem 1.9rem 1.7rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 2rem 3rem;
+  }
+  .intro h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+  .intro ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+
+  .contents li { display: flex; gap: 0.85rem; align-items: flex-start; }
+  .num {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .txt { display: flex; flex-direction: column; gap: 0.1rem; font-size: 0.93rem; line-height: 1.45; }
+  .txt strong { color: var(--heading, var(--text)); }
+  .txt span, .steps span { color: var(--muted); }
+
+  .steps { counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-left: 2.6rem;
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .steps strong { color: var(--heading, var(--text)); }
+
+  .aside {
+    margin: 1.1rem 0 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* ---------- Library header and grid of compact cards ---------- */
+  .library { margin-top: 2.5rem; }
+  .library-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .library-head h2 { margin: 0; font-size: 1.3rem; }
+  .count { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1.1rem;
+    align-items: stretch;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem 1.1rem;
+  }
+  .card h3 { margin: 0 0 0.5rem; font-size: 1.1rem; line-height: 1.3; }
+  .card .desc {
+    margin: 0 0 1rem;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: var(--text);
+    /* keeps every card the same size: long descriptions are cut off after 4 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* learning objectives shown on the card, just above the Learn more button */
+  .card-objectives { margin: 0 0 1rem; }
+  .card .label { margin: 0 0 0.4rem; }
+  .card .tags { margin: 0; gap: 0.35rem; }
+  .card .tags li { font-size: 0.78rem; padding: 0.15rem 0.6rem; }
+
+  .card-foot {
+    margin-top: auto;           /* keeps the button at the bottom, so cards line up */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .badge {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--heading, var(--accent));
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .learn {
+    margin-left: auto;
+    padding: 0.45rem 0.95rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .learn:hover { background: var(--accent-dark, var(--accent)); }
+  .learn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Windows (detail + PDF preview) ---------- */
+  dialog {
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    overflow: hidden;
+  }
+  dialog[open] { display: flex; flex-direction: column; }
+  dialog::backdrop { background: rgba(15, 30, 50, 0.55); }
+  /* stop the page behind from scrolling while a window is open */
+  :global(body:has(dialog[open])) { overflow: hidden; }
+
+  .detail-dlg { width: min(46rem, 94vw); max-height: 88vh; }
+  .preview-dlg { width: min(72rem, 94vw); height: 90vh; max-height: 90vh; }
+
+  .dlg-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .dlg-head h2 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+  .dlg-actions { display: flex; align-items: center; gap: 0.9rem; font-size: 0.9rem; }
+  .dlg-close {
+    flex: none;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--heading, var(--text));
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .dlg-close:hover { border-color: var(--accent); color: var(--accent); }
+  #preview-frame { flex: 1; width: 100%; border: 0; background: #fff; }
+
+  /* content of the detail window */
+  .dlg-body { padding: 1.25rem 1.5rem 1.6rem; overflow-y: auto; }
+  .dlg-body .desc { margin: 0 0 0.8rem; font-size: 0.98rem; line-height: 1.65; color: var(--text); }
+
+  .label {
+    margin: 1.2rem 0 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .dlg-body .tags { margin: 0; gap: 0.4rem; }
+  .dlg-body .tags li { font-size: 0.85rem; padding: 0.2rem 0.7rem; }
+
+  .downloads { display: grid; gap: 0.7rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .note { align-self: center; font-size: 0.82rem; color: var(--muted); }
+  .preview,
+  .download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .preview {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: var(--bg);
+  }
+  .preview:hover { background: var(--accent-soft); color: var(--heading, var(--accent)); }
+  .download {
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+  }
+  .download .size { font-weight: 400; font-size: 0.8rem; opacity: 0.85; }
+  .download:hover { background: var(--accent-dark, var(--accent)); color: #fff; }
+  .preview:focus-visible,
+  .download:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 600px) {
+    .intro { padding: 1.2rem 1.1rem 1.3rem; grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .detail-dlg { width: 96vw; max-height: 92vh; }
+    .dlg-body { padding: 1rem 1.1rem 1.3rem; }
+    .actions > * { flex: 1 1 100%; }
+  }
+</style>

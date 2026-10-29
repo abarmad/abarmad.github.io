@@ -1,0 +1,142 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+</div>
+    <h2 class="fw-bold" style="text-align: center">Common Fund Experiment</h2>
+{{ endblock }}
+
+{{ block content }}
+
+<div class="container mt-3">
+    <div style="display: none;">
+        {{ formfield 'player_name' }}
+    </div>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i> Objective</h5>
+            <p class="text-muted mb-0">Your goal is to <b>earn as many points as possible</b> over the course of this experiment.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; margin-bottom: 1.05rem !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color: indigo">How the Interaction Works</h5>
+                    <ul>
+                        <li>
+                            You start each round with <strong>10 points</strong>.
+                        </li>
+                        <li>
+                            You will <strong>privately choose</strong> how many points to contribute to a <i>common fund</i>.
+                        </li>
+                        <li>
+                            You may contribute any amount from <strong>0 to 10 points</strong>.
+                        </li>
+                    </ul>
+                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">What Happens Next</h5>
+                    <ol>
+                        <li>All contributions are <strong>added together</strong>.</li>
+                        <li>The total contribution is <strong>tripled</strong>.</li>
+                        <li>This becomes the <strong>common prize</strong>.</li>
+                        <li>The prize is <strong>split equally</strong> among all participants.</li>
+                        {% if is_pg_p %}
+                        <li><strong>Your intermediate Profit</strong> = 10 - Your Contribution + Your Share of the Prize</li>
+                        {% endif %}
+                    </ol>
+                    {% if is_pg_p %}
+                    <h5 class="fw-bold mt-4 mb-3" style="color: maroon">Point Reductions</h5>
+                    <ol>
+                        <li>Everyone will be given 2 more points.</li>
+                        <li>You can pay 1 point to reduce 3 points from another person.
+                            You can reduce up to 6 points from another person.</li>
+                    </ol>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card shadow-sm border-0 bg-light mb-4" style="border-radius: 15px; border: 1px solid #dee2e6 !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold" style="color: navy">Important Rules</h5>
+                    <ul>
+                        <li>Your decision is <strong>private</strong> — do not share it with others.</li>
+                        <li>You will play <strong>{{C.NUM_ROUNDS}} rounds</strong>.</li>
+                        <li>At the end we will show a ranking of total profits.</li>
+                    </ul>
+                    <p style="text-align: center">Good luck!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            {% if is_pg_p %}
+             <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+                <h5 class="fw-bold small"><i class="bi bi-lightbulb"></i>Your Final Profits</h5>
+                <p class="small">10 − Your Contribution + Your Share of the Prize + 2 extra points
+                    − points you pay to reduce other’s points − points others reduce from you</p>
+            </div>
+            {% else %}
+            <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+                <h5 class="fw-bold small"><i class="bi bi-lightbulb"></i>Your Profits =</h5>
+                <p class="small">10 − Your Contribution + Your Share of the Prize</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#nameModal" style="border-radius: 10px;">
+            Begin Experiment
+        </button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="nameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Participant Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted mb-3">Please enter your player name:</p>
+                <input type="text" id="modal-name-input" class="form-control form-control-lg" placeholder="Your Name" style="border-radius: 10px;">
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" onclick="submitName()" class="btn btn-primary w-100 py-2" style="border-radius: 10px;">Start Experiment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitName() {
+        const nameVal = document.getElementById('modal-name-input').value;
+
+        if (nameVal.trim() === "") {
+            alert("Please enter a name to continue.");
+        } else {
+            // Transfer modal value to hidden oTree field
+            document.getElementsByName('player_name')[0].value = nameVal;
+            // Submit the oTree form
+            document.getElementById('form').submit();
+        }
+    }
+</script>
+
+
+<style>
+    body { background-color: #f8f9fa; }
+    .list-group-item { background: transparent; }
+    .otree-footer, .footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+{{ endblock }}

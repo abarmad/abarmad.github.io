@@ -436,6 +436,13 @@ SUGGESTED CLEANING STEPS (in Excel or Google Sheets)
    tell them apart, and do not rely on id_in_session alone because it restarts
    at 1 in every session.
 
+DATA CLEANING PYTHON FILE
+If you don't want to manually select which columns you want to keep, you can 
+run the provided "data_cleaner.py" python script to generate a cleaned up ver
+sion of the csv file. Before running it, first make sure that you update the 
+path to where you have the raw csv file located, and then you can run it with 
+"python3 data_cleaner.py".  
+
 
 PRIVACY
 - The data includes participants' names. These are personally identifying.

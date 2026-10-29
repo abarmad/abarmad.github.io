@@ -1,0 +1,36 @@
+{% extends "otree/Page.html" %}
+
+{% block global_styles %}
+<style>
+    /* 1. Target the specific class you found in the inspector */
+    .powered-by-otree {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 2. Target any link that goes to otree.org, just in case they change the class */
+    a[href*="otree.org"] {
+        display: none !important;
+    }
+
+    /* 3. Ensure your custom footer stays styled and visible */
+    .my-custom-footer {
+        display: block !important;
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px;
+        border-top: 1px solid #ddd;
+        font-family: Arial, sans-serif;
+    }
+</style>
+{% endblock %}
+
+{% block footer %}
+    <div class="my-custom-footer">
+        © 2026 Social Science Experimental Lab | 
+        <a href="mailto:mayada@nyu.edu" style="display: inline !important;">Contact Us</a>
+    </div>
+{% endblock %}

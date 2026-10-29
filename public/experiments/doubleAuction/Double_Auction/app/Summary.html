@@ -1,0 +1,168 @@
+{% extends "global/Page.html" %}
+{{ block title }}Final Experiment Summary{{ endblock }}
+
+{{ block content }}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 mb-5" style="border-radius: 15px;">
+        <div class="card-header bg-primary text-white p-3 text-center" style="border-radius: 15px 15px 0 0;">
+            <h3 class="mb-0">Final Performance Ranking</h3>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Rank</th>
+                        <th>Player</th>
+                        <th class="text-end pe-4">Total Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ for entry in leaderboard }}
+                    <tr {{ if entry.is_me }}class="table-primary fw-bold"{{ endif }}>
+                        <td class="ps-4">{{ forloop.counter }}</td>
+                        <td>
+                            {{ entry.name }}
+                            {{ if entry.is_me }}
+                                <span class="badge rounded-pill bg-dark ms-2">YOU</span>
+                            {{ endif }}
+                        </td>
+                        <td class="text-end pe-4">
+                            <span class="{{ if entry.total_profit < 0 }}text-danger{{ endif }}">
+                                {{ entry.total_profit }}
+                            </span>
+                        </td>
+                    </tr>
+                    {{ endfor }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-5">
+    <h3 class="text-muted text-center mb-4">Round-by-Round Analysis</h3>
+
+    <div id="highcharts-error" class="alert alert-danger d-none" role="alert">
+        <strong>Error:</strong> The charting library could not be loaded. Please check your internet connection or disable ad-blockers.
+    </div>
+
+    {{ for h in history }}
+    <div class="card shadow-sm mb-5 border-0" style="border-radius: 15px;">
+        <div class="card-header bg-dark text-white p-3">
+            <h4 class="mb-0">Round {{ h.round }} Analysis</h4>
+        </div>
+        <div class="card-body">
+
+            <div class="row mb-4 text-center">
+                <div class="col-6">
+                    <div class="p-3 rounded bg-light border">
+                    {{ if h.treatment == 'competitive' }}
+                        <p class="text-muted small mb-1">EQUILIBRIUM SURPLUS / MAX SURPLUS</p>
+                        <h5 class="fw-bold text-primary">${{ h.theo_total_surplus }} / <span class="text-success">${{ h.theo_max_surplus }}</span></h5>
+                    {{ else }}
+                        <p class="text-muted small mb-1">MAX SURPLUS</p>
+
+                        <h5 class="fw-bold text-success">${{ h.theo_max_surplus }}</h5>
+
+                    {{ endif }}
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-3 rounded bg-light border">
+                        <p class="text-muted small mb-1">ACTUAL TOTAL SURPLUS</p>
+                        <h5 class="fw-bold text-indigo">${{ h.actual_total_surplus }}</h5>
+                        {{ if h.treatment == 'competitive' }}
+                            <span class="badge {{ if h.all_bought }}bg-success{{ else }}bg-secondary{{ endif }}">
+                                Bonus: {{ if h.all_bought }}Triggered (+{{ h.bonus_pool }}){{ else }}Not Triggered{{ endif }}
+                            </span>
+                        {{ endif }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>1. Equilibrium (Theoretical)</h6>
+                    <table class="table table-sm small table-bordered">
+                        <tr class="table-light">
+                            <th>Price (P)</th><th>Qty (Q)</th>
+                        </tr>
+                        <tr>
+                            <td>${{ h.theo_p }}</td>
+                            <td>{{ h.theo_q }}</td>
+                        </tr>
+                    </table>
+                    <div id="chart-theo-{{ h.round }}" style="height: 300px; width: 100%;"></div>
+                </div>
+
+                <div class="col-md-6 border-start">
+                    <h6>2. Actual Behavior</h6>
+                    <table class="table table-sm small table-bordered">
+                        <tr class="table-light">
+                            <th>Actual P</th><th>Actual Q</th>
+                        </tr>
+                        <tr>
+                            <td>${{ h.actual_p }}</td>
+                            <td>{{ h.actual_q }}</td>
+                        </tr>
+                    </table>
+                    <div id="chart-actual-{{ h.round }}" style="height: 300px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ endfor }}
+</div>
+
+<style>
+    body { background-color: #f4f7f6; }
+    h6 { font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .table-primary { background-color: #cfe2ff !important; }
+</style>
+{{ endblock }}
+{{ block scripts }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.1/highcharts.js"></script>
+
+<script>
+    function createChart(containerId, title, buyers, sellers) {
+        const container = document.getElementById(containerId);
+        // Check if Highcharts loaded and data exists
+        if (!container || !window.Highcharts || !buyers || !sellers) return;
+
+        let demand = [];
+        let supply = [];
+
+        // Formatting step functions for supply and demand curves
+        buyers.forEach((v, i) => { demand.push([i, v]); demand.push([i + 1, v]); });
+        sellers.forEach((c, i) => { supply.push([i, c]); supply.push([i + 1, c]); });
+
+        Highcharts.chart(containerId, {
+            chart: { type: 'line', animation: false },
+            title: { text: title },
+            xAxis: { title: { text: 'Quantity (Q)' }, min: 0, tickInterval: 1 },
+            yAxis: { title: { text: 'Price (P)' }, min: 0 },
+            series: [
+                { name: 'Demand (Bids)', data: demand, step: 'left', color: '#0d6efd', lineWidth: 3 },
+                { name: 'Supply (Asks)', data: supply, step: 'left', color: '#198754', lineWidth: 3 }
+            ],
+            plotOptions: { series: { marker: { enabled: false } } },
+            credits: { enabled: false }
+        });
+    }
+
+    function renderAll() {
+        {{ for h in history }}
+            createChart('chart-theo-{{ h.round }}', 'Theoretical Equilibrium', {{ h.theo_vals|json }}, {{ h.theo_costs|json }});
+            createChart('chart-actual-{{ h.round }}', 'Actual Market Behavior', {{ h.actual_bids|json }}, {{ h.actual_asks|json }});
+        {{ endfor }}
+    }
+
+    // Immediate execution check
+    if (window.Highcharts) {
+        renderAll();
+    } else {
+        // Fallback: wait for the local script to finish parsing
+        window.addEventListener('load', renderAll);
+    }
+</script>
+{{ endblock }}

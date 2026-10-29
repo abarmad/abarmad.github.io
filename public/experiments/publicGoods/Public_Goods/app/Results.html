@@ -1,0 +1,126 @@
+{% extends "global/Page.html" %}
+{% block title %}<span class="text-primary">Round Result</span>{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-info text-center py-4 shadow-sm border-0" style="border-radius: 15px;">
+        <h2 class="display-6 fw-bold">Stage 1: Public Fund Outcome</h2>
+        {% if is_pg_p %}
+        <p class="mb-0">Your intermediate Profit: 10 - Your Contribution + Your Share of the Prize</p>
+        {% else %}
+        <p class="mb-0">Your Profit this round: 10 - Your Contribution + Your Share of the Prize</p>
+        {% endif %}
+        <p>({{C.ENDOWMENT}} - {{player.contribution}}) + {{group.individual_share}} = <strong>{{ player.payoff }} Points</strong></p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Total Group Contribution</h5>
+                    <h2 class="text-primary fw-bold">{{ group.total_contribution }}</h2>
+                    <p class="text-muted">Points Contributed</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background-color: #fffaf0;">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Your Contribution</h5>
+                    <h2 class="text-warning fw-bold">{{ player.contribution }}</h2>
+                    <p class="text-muted">Points Contributed</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background-color: #e8f6dc;">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Your Share of Prize</h5>
+                    <h2 class="text-success fw-bold">{{ group.individual_share }}</h2>
+                    <p class="text-muted">Points received from Fund</p>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Average Contribution</h5>
+                    <h2 class="text-primary fw-bold">{{ group.average_contribution }}</h2>
+                    <p class="text-muted">Points Contributed</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    {% if is_pg_p %}
+    <div class="alert alert-warning border-0 small">
+        <i class="bi bi-info-circle"></i>
+        You have <strong>{{ C.PUNISHMENT_ENDOWMENT }} points</strong> available to spend on reductions this round.
+        Each 3-point reduction you apply costs you 1 point.
+    </div>
+
+    <div class="card border-0 shadow-sm mt-4" style="border-radius: 15px;">
+        <div class="card-body">
+            <div class="alert alert-secondary text-center py-2 mb-4" style="border-radius: 10px;">
+                Your ID for this round is: <strong>{{ my_id }}</strong>
+            </div>
+            <h5 class="fw-bold text-danger mb-3"><i class="bi bi-exclamation-triangle"></i> Point Reductions</h5>
+            <p class="text-muted small">You can pay 1 point to reduce 3 points from another person.
+                You can reduce up to 6 points from another person</p>
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Participant Nickname</th>
+                        <th>Contribution</th>
+                        <th>Reduction to Apply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for other in others %}
+                    <tr>
+                        <td>{{ other.nickname }}</td>
+                        <td>{{ other.contribution }} points</td>
+                        <td>
+                            <select name="punish_p{{ other.id_in_group }}" class="form-select form-select-sm">
+                                <option value="0">No Reduction (0 pts)</option>
+                                <option value="1">Reduce by 3 pts (Costs 1)</option>
+                                <option value="2">Reduce by 6 pts (Costs 2)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {{ if player.round_number == 1 }}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; background-color: #fff4f4; border: 1px solid #f5c6cb !important;">
+                <div class="card-body p-4">
+                    <h5 class="text-dark mb-3">Reflective Reasoning</h5>
+                    {{ formfield 'justification' }}
+                    {{ formfield 'nextContribution' }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ endif }}
+
+
+    <div class="text-center mt-4">
+        <button class="btn btn-dark px-5 py-2" style="border-radius: 10px;">
+            {% if is_pg_p %}Submit {% else %}Continue{% endif %}
+        </button>
+    </div>
+</div>
+{% endblock %}

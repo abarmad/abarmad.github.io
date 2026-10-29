@@ -16,6 +16,7 @@ export const site = {
     { label: "Home", href: "/" },
     { label: "Research", href: "/research" },
     { label: "Teaching", href: "/teaching" },
+    { label: "Experiments", href: "/experiments"},
     { label: "CV", href: "/cv" },
   ],
 };

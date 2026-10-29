@@ -1,0 +1,156 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+    <span class="text-primary">Market Outcome</span>
+{{ endblock }}
+
+{{ block content }}
+<div class="container mt-4">
+    <div class="alert
+        {{ if is_loss }}alert-danger{{ elif player.is_trader }}alert-success{{ else }}alert-secondary{{ endif }}
+        text-center py-4 shadow-sm border-0" style="border-radius: 15px;">
+
+        <h2 class="display-6 fw-bold">
+            {{ if is_loss }}
+                Loss Incurred
+            {{ elif player.is_trader }}
+                Trade Executed!
+            {{ else }}
+                No Trade Made
+            {{ endif }}
+        </h2>
+
+        <div class="mt-2">
+            <span class="fs-4">Trading Profit: <strong>${{ trading_profit }}</strong></span>
+            {{ if player.is_trader }}
+                <div class="text-muted">
+                {{ if player.is_buyer }}
+                    Value - Market Price =
+                    {{ player.value }} - {{ group.market_price }} = {{ trading_profit }}
+                {{ else }}
+                    Market Price - Cost =
+                    {{ group.market_price }} - {{ player.cost }} = {{ trading_profit }}
+                {{ endif }}
+                </div>
+            {{ endif }}
+
+            {{ if bonus_triggered }}
+                <div class="text-success fw-bold mt-2">
+                    <i class="bi bi-plus-circle-fill"></i> Every buyer purchased a good. Everyone receives + {{ bonus_amount }} points bonus!
+                </div>
+            {{ endif }}
+            <hr>
+<!--            <h3 class="fw-bold">Final Round Payoff: {{ player.payoff }}</h3>-->
+        </div>
+
+        <p class="fs-4">
+            {{ if is_loss }}
+                Your Loss this round: <strong class="text-danger">{{ player.payoff }}</strong>
+            {{ else }}
+                Your Final Profit this round: <strong>{{ player.payoff }}</strong>
+            {{ endif }}
+        </p>
+    </div>
+
+
+    <div class="row mt-4">
+        <div class="col-md-5 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="text-muted mb-4">Market Summary</h5>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span>Market Price</span>
+                        <span class="fw-bold text-primary">${{ group.market_price }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Quantity</span>
+                        <span class="fw-bold text-dark">{{ group.quantity }} units</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="text-muted mb-3">Market Transparency</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover border-top">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Buyer Bids</th>
+                                    <th>Seller Asks</th>
+                                    <th class="text-primary">Your Private Info</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ for b_obj, a_obj in zipped_data }}
+                                <tr {{ if b_obj.val >= a_obj.val }}style="background-color: #f0fff0;"{{ endif }}>
+                                    <td>
+                                        ${{ b_obj.val }}
+                                        {{ if b_obj.is_me }}
+                                            <span class="badge rounded-pill bg-primary ms-1">You</span>
+                                        {{ endif }}
+                                    </td>
+
+                                    <td>
+                                        ${{ a_obj.val }}
+                                        {{ if a_obj.is_me }}
+                                            <span class="badge rounded-pill bg-success ms-1">You</span>
+                                        {{ endif }}
+                                    </td>
+
+                                    <td class="fw-bold">
+                                        {{ if b_obj.is_me }}
+                                            <span class="{{ if is_loss }}text-danger{{ else }}text-primary{{ endif }}">
+                                                Value: ${{ b_obj.private }}
+                                            </span>
+                                        {{ elif a_obj.is_me }}
+                                            <span class="{{ if is_loss }}text-danger{{ else }}text-success{{ endif }}">
+                                                Cost: ${{ a_obj.private }}
+                                            </span>
+                                        {{ else }}
+                                            <span class="text-muted small">—</span>
+                                        {{ endif }}
+                                    </td>
+                                </tr>
+                                {{ endfor }}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="small text-muted mt-2">* Highlighted rows indicate successful matches.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{ if player.round_number == 1 }}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0" style="border-radius: 15px; background-color: #fff4f4; border: 1px solid #f5c6cb !important;">
+            <div class="card-body p-4">
+                <h5 class="text-dark mb-3">Reflective Reasoning</h5>
+                <p class="text-muted small mb-3">
+                    Based on the outcome of this first round, please provide your thoughts on your strategy.
+                </p>
+                {{ formfield 'justification' label=dynamic_label }}
+            </div>
+        </div>
+    </div>
+</div>
+{{ endif }}
+
+<div class="text-center mt-4">
+    <button class="btn btn-outline-dark px-5 py-2" style="border-radius: 10px;">
+        {{ if player.round_number == 1 }}Submit & Continue{{ else }}Continue to Next Round{{ endif }}
+    </button>
+</div>
+
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .display-6 { letter-spacing: -1px; }
+    .text-danger { color: #dc3545 !important; }
+    .alert-danger { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+</style>
+{{ endblock }}

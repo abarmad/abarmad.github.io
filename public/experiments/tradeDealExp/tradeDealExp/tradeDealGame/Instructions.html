@@ -1,0 +1,284 @@
+{% extends "global/Page.html" %}
+{% block content %}
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body, .otree-body {
+    /* background: #f5f3ff !important; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  /* ── TOP BAR ── */
+  .neg-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1e1245;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 14px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 16px rgba(30,18,69,.18);
+  }
+  .neg-header .title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+
+  /* ── CONTENT WRAPPER ── */
+  .page-content {
+    max-width: 960px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 15px rgba(30,18,69,.07);
+    padding: 32px 40px;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .page-content h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e1245;
+    margin: 28px 0 10px;
+    letter-spacing: .01em;
+  }
+  .page-content h3:first-child { margin-top: 0; }
+
+  .page-content p {
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+
+  .page-content ul, .page-content ol {
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.7;
+    padding-left: 22px;
+    margin: 0 0 12px;
+  }
+  .page-content li { margin-bottom: 6px; }
+
+  .page-content strong { color: #1e1245; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 24px 0;
+  }
+
+  /* ── READ CAREFULLY NOTICE ── */
+  .notice {
+    background: #faf5ff;
+    border-left: 3px solid #7c3aed;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5b21b6;
+    margin-bottom: 18px;
+  }
+
+  /* ── WARNING (red notices) ── */
+  .warning {
+    background: #fff1f2;
+    border-left: 3px solid #f87171;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #991b1b;
+    margin: 16px 0;
+  }
+
+  /* ── FORMULA ── */
+  .formula {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e1245;
+    background: #f5f3ff;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 14px 0;
+  }
+
+  /* ── EXAMPLE TABLE ── */
+  .prod-table {
+    width: 100%;
+    max-width: 380px;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .prod-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .prod-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+  }
+  .prod-table tr:last-child td { border-bottom: none; }
+  .table-note {
+    font-size: 13px;
+    color: #94a3b8;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* ── NAME INPUT ── */
+  .name-section {
+    background: #f5f3ff;
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-top: 28px;
+  }
+  .name-section p { margin-bottom: 10px; }
+
+  /* ── SUBMIT ── */
+  .submit-area {
+    text-align: center;
+    margin-top: 24px;
+  }
+  .btn-submit {
+    background: #1e1245;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 36px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    box-shadow: 0 2px 8px rgba(30,18,69,.2);
+  }
+  .btn-submit:hover { background: #0f172a; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+</style>
+
+<!-- ══ TOP BAR ══ -->
+<div class="neg-header">
+  <div class="title">Welcome to the Trade Deal Experiment</div>
+</div>
+
+<div class="page-content">
+
+  <!-- Overview -->
+  <h3>Instruction Overview</h3>
+  <div class="warning">Read all instructions carefully before continuing.</div>
+  <p>
+    In this experiment, you will be assigned the role of a country that produces two goods:
+    <strong>clothes</strong> and <strong>food</strong>. You will choose between several possible
+    <strong>production plans</strong> that define the total amount of each good you can produce.
+  </p>
+
+  <h3 style="margin-top: 16px;">Example Production Plans</h3>
+  <table class="prod-table">
+    <thead>
+      <tr><th>Plan</th><th>Clothes</th><th>Food</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>10</td><td>0</td></tr>
+      <tr><td>2</td><td>8</td><td>2</td></tr>
+      <tr><td>3</td><td>6</td><td>4</td></tr>
+      <tr><td>4</td><td>4</td><td>6</td></tr>
+      <tr><td>5</td><td>2</td><td>8</td></tr>
+      <tr><td>6</td><td>0</td><td>10</td></tr>
+    </tbody>
+  </table>
+  <p class="table-note">This table is for illustration only. Actual plans in the experiment may differ.</p>
+
+  <p>In your country, all production is consumed. Consumption translates into wellbeing according to:</p>
+  <div class="formula">Utility = 5 × minimum{Clothes, Food}</div>
+  <p>
+    Your utility depends on the <em>smaller</em> of the two goods. For example, if your country
+    consumes 8 units of clothes and 2 of food:
+  </p>
+  <div class="formula">5 × minimum{8, 2} = 5 × 2 = 10</div>
+
+  <hr class="divider">
+
+  <!-- Pre-Negotiation -->
+  <h3>Pre-Negotiation Phase</h3>
+  <p>For the first part of the experiment, you will:</p>
+  <ul>
+    <li>Review the available production plans for your country.</li>
+    <li>Select a plan using the slider — your <strong>total utility will update automatically</strong>.</li>
+    <li>Determine which plan gives you the <strong>highest utility without trade (autarky)</strong>.</li>
+    <li>This choice serves as your benchmark before negotiating a trade deal.</li>
+  </ul>
+
+  <hr class="divider">
+
+  <!-- Negotiation -->
+  <h3>Negotiation Phase</h3>
+  <p>
+    Before choosing your final plan, you will be paired with a partner and have <strong>5 minutes</strong>
+    to negotiate a trade deal. Your partner may have different production plans and thus faces different
+    tradeoffs. An agreement will state the amounts of clothes and food the countries will trade, for example:
+  </p>
+  <div class="formula" style="font-weight: 500; font-size: 15px; font-style: italic;">
+    Country 1 trades 3 units of food for 2 units of clothes with Country 2.
+  </div>
+  <p>Here is how the negotiation works:</p>
+  <ol>
+    <li>Use the <strong>chat box</strong> to communicate and negotiate a trade agreement with your partner.</li>
+    <li>Choose a <strong>production plan</strong> that determines how much your country produces.</li>
+    <li>Specify how much you will <strong>export</strong> and <strong>import</strong> based on your agreement.</li>
+    <li>Adjust your choices during negotiation — your <strong>utility is calculated automatically</strong>.</li>
+    <li>Once satisfied, <strong>submit your final choices</strong>.</li>
+  </ol>
+
+  <div class="warning">
+    Do not reveal the details of your production plan to your partner. These are only to be known by you.
+  </div>
+
+  <hr class="divider">
+
+  <!-- Constraints -->
+  <h3>Important Constraints</h3>
+  <p>You must choose a production plan that allows you to comply with your trade deal:</p>
+  <ol>
+    <li>You cannot export more than you produce.</li>
+    <li>Consumption = production − exports + imports.</li>
+  </ol>
+
+  <hr class="divider">
+
+  <!-- Objective -->
+  <h3>Your Objective</h3>
+  <p>Choose the consumption of goods that <strong>maximises your utility</strong>.</p>
+  <p>
+    Groups that reach a trade deal yielding higher utility for <em>both</em> countries compared to
+    their optimal autarky plans will be awarded a participation point
+    (<em>"Both countries benefited from trade"</em>).
+  </p>
+
+  <!-- Name Input -->
+  <div class="name-section">
+    <p>Before continuing, please enter your name:</p>
+    {{ formfield 'player_name' label="" }}
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-area">
+    <button class="btn-submit">Continue</button>
+  </div>
+
+</div>
+
+{% endblock %}

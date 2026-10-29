@@ -1,0 +1,44 @@
+{% extends "global/Page.html" %}
+{% block title %}
+    <span class="text-primary fw-bold">Round {{ player.round_number }} / {{ C.NUM_ROUNDS }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-4 overflow-hidden" style="border-radius: 15px;">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 text-center">Decision Portal</h4>
+                </div>
+                <div class="card-body bg-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small uppercase fw-bold">Current Status</p>
+                            <h2 class="mb-0">Your Endowment: <span class="text-primary">{{ C.ENDOWMENT }} Points</span></h2>
+                        </div>
+                        <div class="text-end">
+                             <i class="bi bi-piggy-bank-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 15px; background-color: #fcfcfc; border: 1px solid #eee !important;">
+                <p class="lead mb-4">How many points do you want to contribute to the <strong>Common Fund</strong>? (0-10)</p>
+
+                <div class="input-group input-group-lg mb-3">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-plus-circle"></i></span>
+                    <input type="number" name="contribution" class="form-control border-start-0" min="0" max="10" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-dark btn-lg shadow-sm" style="border-radius: 10px;">
+                        Submit Contribution
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

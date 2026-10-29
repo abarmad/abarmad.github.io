@@ -1,0 +1,174 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+<span class="text-primary fw-bold">Instructions</span>
+{{ endblock }}
+
+{{ block content }}
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold">Round {{ roundNum }} / {{ C.NUM_ROUNDS }}</h2>
+    <br>
+    {{ if is_last_round_of_role }}
+    <div class="alert alert-warning border-0 shadow-sm mb-4 d-flex align-items-center" style="border-radius: 15px;">
+        <i class="bi bi-exclamation-triangle-fill me-3 fs-4 text-dark"></i>
+        <div>
+            <h6 class="fw-bold mb-1">Role Switch Notice</h6>
+            <p class="mb-0 small">This is the final round in your current role. <strong>Next round, you will switch roles</strong> (Buyers become Sellers, and vice versa).</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-dark ms-auto" data-bs-toggle="modal" data-bs-target="#instrModal" style="border-radius: 8px;">
+            Re-read Instructions
+        </button>
+    </div>
+    {{ endif }}
+</div>
+
+<div class="modal fade" id="instrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 bg-light">
+                <h5 class="modal-title fw-bold text-primary">Market Instructions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i> Objective</h5>
+                                <p class="text-muted mb-0">You will participate in a market as a buyer or seller. Your goal is to <b>maximize your profit</b>.</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-4">
+                                <div class="card shadow-sm border-0" style="border-radius: 15px; margin-bottom: 1.05rem !important;">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i> Your Role</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-0 ps-0" style="text-align: justify">
+                                                Your role is randomly assigned.
+                                                You keep your role for the first {{halfRound}} rounds, then switch for the next {{halfRound}} rounds.
+                                            </li>
+                                        </ul>
+                                        <ul style="line-height: 2;">
+                                            <li class="border-0">
+                                                <strong>Buyers</strong> receive a private value (maximum willingness to pay).
+                                            </li>
+                                            <li class="border-0">
+                                                <strong>Sellers</strong> receive a private cost (minimum acceptable price).
+                                            </li>
+                                        </ul>
+                                        <br>
+                                        <h5 class="fw-bold mb-3" style="color: indigo">Step 1: Submit Your Bid / Ask</h5>
+                                        <ul style="line-height: 2;">
+                                            <li class="border-0">
+                                                <strong>Buyers</strong> submit one bid price: how much they are willing to pay.
+                                            </li>
+
+                                            <li class="border-0">
+                                                <strong>Sellers</strong> submit one ask price: the price they want to be paid.
+                                            </li>
+                                        </ul>
+                                        <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Step 2: Market Clearing</h5>
+                                        <p>After all submissions:</p>
+                                        <ul style="line-height: 2;">
+                                            <li>Bids are ranked from highest to lowest.</li>
+                                            <li>Asks are ranked from lowest to highest.</li>
+                                            <li>The highest buyer is matched with the lowest seller.</li>
+                                            <li>The second-highest buyer is matched with the second-lowest seller.</li>
+                                            <li>A match is successful only if the buyer's bid is greater than or equal to the seller's ask.</li>
+                                            <li>This process of matching continues until the buyer's bid is lower than the seller's ask.</li>
+                                        </ul>
+
+
+                                        <h5 class="fw-bold" style="color: indigo">Step 3: Market Price</h5>
+                                        <p style="text-align: justify">How much will you pay as a buyer? How much will you receive as a seller? A <b>single market
+                                            price</b> will be calculated on the basis of all submitted bids and asks. All trades occur at the same price.
+                                            The price is calculated in this manner:</p>
+                                        <ul style="line-height: 2;">
+                                            <li>Look at the <b>last successful match</b>.</li>
+                                            <li>Take the buyer's bid and the seller's ask in that match.</li>
+                                            <li>The market price is the average of these two numbers.</li>
+                                        </ul>
+
+                                        <div class="p-3 border mb-3" style="border-radius: 1.45rem !important; background-color:lightgoldenrodyellow;">
+                                            <p class="mb-1"> <strong>Example of a Market Price:</strong></p>
+                                            <p class="small mb-0"><b>Bids:</b> 100, 90, 80, 70 <br>
+                                                <b>Asks:</b> 20, 40, 60, 85</p>
+                                            <ul class="small">
+                                                <li>100 ≥ 20 (match)</li>
+                                                <li>90 ≥ 40 (match)</li>
+                                                <li>80 ≥ 60 (match)</li>
+                                                <li>70 < 85 (stop)</li>
+                                            </ul>
+
+                                            <p class="small mb-0">
+                                                The number of trades is 3. The last matched bid: 80 Last matched ask: 60. The market
+                                                price is the average: (60 + 80) / 2 = 70.
+                                            </p>
+                                        </div>
+                                        <h5 class="fw-bold mt-3" style="color: indigo">Step 4: Trading Profits</h5>
+                                        <p>If you are selected among the matched traders, you will trade at the market price.</p>
+                                        <ul style="line-height: 2;">
+                                            <li><p class="mb-1"><strong>Buyer profit =</strong>  Value − Market Price</p></li>
+                                            <li><p class="mb-1"><strong>Seller profit =</strong> Market Price − Cost</p></li>
+                                        </ul>
+
+                                        <p>If you do not trade, your profit is zero.</p>
+
+                                        {% if player.treatment == 'competitive' %}
+                                        <h5 class="fw-bold mt-3" style="color: indigo">Step 5: Final Profits</h5>
+                                        <p style="text-align: justify">
+                                            In this market, if <b>every buyer buys a good</b>, every person in the market will receive <b>10 additional points</b>.
+                                        </p>
+                                        <ul style="line-height: 2;">
+                                            <li><strong>Final Buyer profit</strong> = Value − Market Price + (10 points if everyone buys)</li>
+                                            <li><strong>Final Seller profit</strong> = Market Price − Cost + (10 points if everyone buys)</li>
+                                        </ul>
+                                        {% endif %}
+                                        <br>
+                                        <h5 class="text-muted fw-bold mt-3">Multiple Rounds</h5>
+                                        <p style="text-align: justify">
+                                            The experiment will be repeated for several {{numRounds}} rounds. You will keep your role for the first {{ halfRound }} rounds.
+                                            Then, you will switch roles for the next {{halfRound}} rounds. Try to improve your decisions based on previous outcomes.
+                                            At the end, we will add all your profits and show a ranking of performance in the experiment.
+                                        </p>
+
+
+                                    </div>
+
+
+                                </div>
+                                <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+                                    <h6 class="fw-bold"><i class="bi bi-lightbulb"></i> Strategy Tips</h6>
+                                    <ul class="mb-0" style="line-height: 2;">
+                                        <li>Buyers: Do not bid above your value (you will lose money)</li>
+                                        <li>Sellers: Do not ask below your cost (you will lose money)</li>
+                                        <li>Consider how your decision affects your chance of trading</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary px-5" data-bs-dismiss="modal" style="border-radius: 10px;">Return</button>
+                </div>
+            </div>
+        </div>
+    </div> </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-dark btn-lg shadow-sm" style="border-radius: 10px; transition: 0.3s;">
+            Next
+        </button>
+    </div>
+
+    <style>
+        body { background-color: #f8f9fa; }
+        .otree-title { display: none; }
+        .x-small { font-size: 0.85rem; }
+        .input-group-text { border-radius: 10px 0 0 10px !important; }
+        input { border-radius: 0 10px 10px 0 !important; border-left: none !important; }
+        .btn-dark:hover { background-color: #333; transform: translateY(-2px); }
+    </style>
+    {{ endblock }}

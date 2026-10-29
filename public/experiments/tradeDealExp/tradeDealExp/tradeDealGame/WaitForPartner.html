@@ -1,0 +1,24 @@
+{% extends "otree/WaitPage.html" %}
+
+{% block content %}
+
+<div style="text-align:center; margin-top: 50px;">
+    <h3>Waiting for another participant to join...</h3>
+
+    <p>Refresh page in <span id="countdown">65</span> seconds...</p>
+</div>
+
+<script>
+let seconds = 60;
+
+setInterval(function() {
+    seconds--;
+    document.getElementById("countdown").innerText = seconds;
+
+    if (seconds <= 0) {
+        location.reload();
+    }
+}, 1000);
+</script>
+
+{% endblock %}

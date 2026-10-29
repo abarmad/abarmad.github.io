@@ -1,0 +1,47 @@
+{% extends "global/Page.html" %}
+{% block title %}<span class="text-primary">Final Round Outcome</span>{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0">Calculation Breakdown</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Base Profit (10 - Contribution + Share)</span>
+                    <span class="fw-bold">{{ base_profit }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between text-success">
+                    <span>Extra Endowment</span>
+                    <span>+{{ punishment_endowment }}</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Cost to Reduce Others (Points Sent)</span>
+                    <span class="{% if player.punishment_sent > 0 %}text-danger fw-bold{% endif %}">
+                    {% if player.punishment_sent > 0 %}-{% endif %}{{ player.punishment_sent }}
+                    </span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Reductions from Others</span>
+                    <span class="{% if player.punishment_received > 0 %}text-danger fw-bold{% endif %}">
+                    {% if player.punishment_received > 0 %}-{% endif %}{{ player.punishment_received }}
+                    </span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between bg-light fw-bold">
+                    <span>Final Round Profit</span>
+                    <span>{{ player.payoff }} Points</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-outline-dark px-5">Continue</button>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{{ extends "global/Page.html" }}
+{{ load otree static }}
+
+
+{{ block title }}
+    <div style="text-align:center; font-size:28px; font-weight:800; color:rebeccapurple"">Survey</div>
+{{ endblock }}
+
+{{ block content }}
+<style>
+    body {
+        background-color: lightyellow;
+    }
+    .content-card { max-width: 850px; margin: auto; background: #fff; padding: 30px 40px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size: 18px; }
+    .next-button { background-color: #4a6cf7; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-size: 18px; }
+</style>
+
+<div class="content-card">
+    {{ formfield player.survey_usage_freq }}
+
+    <div class="mb-3 _formfield">
+        <label class="col-form-label">Which tasks do you use it for?</label>
+        <div class="controls">
+            {{ for choice in task_choices }}
+                <div class="form-check">
+                    <input class="form-check-input task-check" type="checkbox" value="{{ choice }}" id="check_{{ choice }}">
+                    <label class="form-check-label" for="check_{{ choice }}">{{ choice }}</label>
+                </div>
+            {{ endfor }}
+        </div>
+        <input type="hidden" name="survey_tasks" id="survey_tasks_input">
+    </div>
+
+    {{ formfield player.survey_trust }}
+    {{ formfield player.survey_feeling }}
+    {{ formfield player.survey_time_save }}
+    {{ formfield player.survey_follow_suggest }}
+    {{ formfield player.survey_strategy }}
+    <br>
+    <button class="otree-btn-next btn btn-primary">Next</button>
+</div>
+
+
+
+    <script>
+        // Script to combine checkboxes into the hidden string field
+        const checkboxes = document.querySelectorAll('.task-check');
+        const hiddenInput = document.getElementById('survey_tasks_input');
+
+        function updateTasks() {
+            let selected = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) selected.push(cb.value);
+            });
+            hiddenInput.value = selected.join(', ');
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateTasks));
+    </script>
+
+{{ endblock }}

@@ -1,0 +1,93 @@
+{% extends "global/Page.html" %}
+
+{% block title %}
+    <span class="text-primary fw-bold">Round {{ roundNum }} / {{ C.NUM_ROUNDS }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold text-center mb-4">Round {{ roundNum }} / {{ C.NUM_ROUNDS }}</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+
+            <div class="card shadow-sm border-0 mb-4 p-4" style="border-radius: 15px; background-color: #fcfcfc; border: 1px solid #eee !important;">
+                <h4 class="mb-4 text-center">Production Decision</h4>
+                <p class="lead text-center mb-4">Please select your quantity for this round:</p>
+
+                <div class="d-flex justify-content-center mb-4">
+                    {{ formfield 'choice' }}
+                </div>
+
+                <div class="d-grid gap-2 mt-2">
+                    <button class="btn btn-dark btn-lg shadow-sm" style="border-radius: 10px; transition: 0.3s;">
+                        Submit Choice
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mt-4 overflow-hidden" style="border-radius: 15px;">
+                <div class="card-header bg-light border-bottom-0 py-3">
+                    <h5 class="mb-0 text-center text-muted fw-bold">
+                        <i class="bi bi-table me-2"></i>Payoff Reference Table
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered mb-0 text-center align-middle">
+                            <thead style="background-color: #f8f9fa;">
+                                <tr>
+                                    <th class="py-3 text-secondary" style="width: 40%;">Number of OTHER participants choosing LOW</th>
+                                    <th class="py-3 text-primary" style="width: 30%;">Your payoff if you choose LOW</th>
+                                    <th class="py-3 text-success" style="width: 30%;">Your payoff if you choose HIGH</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b class="fs-5">4</b></td>
+                                    <td class="fw-bold fs-5 text-primary">10</td>
+                                    <td class="fw-bold fs-5 text-success">12</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="fs-5">3</b></td>
+                                    <td class="fw-bold fs-5 text-primary">8</td>
+                                    <td class="fw-bold fs-5 text-success">11</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="fs-5">2</b></td>
+                                    <td class="fw-bold fs-5 text-primary">6</td>
+                                    <td class="fw-bold fs-5 text-success">9</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="fs-5">1</b></td>
+                                    <td class="fw-bold fs-5 text-primary">4</td>
+                                    <td class="fw-bold fs-5 text-success">7</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="fs-5">0</b></td>
+                                    <td class="fw-bold fs-5 text-primary">2</td>
+                                    <td class="fw-bold fs-5 text-success">5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    /* Hide the standard oTree title if you are using your own header */
+    .otree-title { display: none !important; }
+    .btn-dark:hover { background-color: #333; transform: translateY(-2px); }
+
+    /* Make the radio inputs look a bit cleaner */
+    .form-check { font-size: 1.2rem; margin-bottom: 15px; }
+
+    /* Table hover effect enhancement */
+    .table-hover tbody tr:hover { background-color: #f1f4f9; transition: 0.2s; }
+</style>
+{% endblock %}

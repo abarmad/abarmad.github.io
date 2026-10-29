@@ -1,0 +1,184 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right" xmlns="http://www.w3.org/1999/html">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+    <br>
+</div>
+    <h2 class="fw-bold" style="text-align: center">Monopoly Quantity Game</h2>
+{{ endblock }}
+
+{{ block content }}
+
+<div class="container mt-3">
+    <div style="display: none;">
+        {{ formfield 'player_name' }}
+    </div>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i>Overview</h5>
+            <p class="text-muted mb-0">You will participate in a computerized market experiment with {{numPlayers}} participants. In each round, you act as a firm choosing how much quantity to produce.
+                Your goal is to <b>maximize your total profit</b>. You will interact for {{numRounds}} rounds.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-4">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; margin-bottom: 1.05rem !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color: indigo">Your Decision (Each Round)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 ps-0" style="text-align: justify">
+                            On your screen, you will choose one option:
+                        </li>
+                    </ul>
+                    <ul style="line-height: 2;">
+                        <li class="border-0">
+                            <strong>Low Quantity (L)</strong>
+                        </li>
+                        <li class="border-0">
+                            <strong>High Quantity (H)</strong>
+                        </li>
+                    </ul>
+                    <p>You have to submit your choice before the timer expires.</p>
+                    <br>
+                    <h5 class="fw-bold mb-3" style="color: indigo">How Your Profit Is Determined</h5>
+                    <p>Your profit depends on:</p>
+                    <ul style="line-height: 2;">
+                        <li class="border-0">
+                            Your own choice (Low or High)
+                        </li>
+                        <li class="border-0">
+                            The number of <b>other participants</b> who chose <b>low</b>
+                        </li>
+                    </ul>
+                    <p>After each round, your screen will display the number of low and number of high quantity and your profit for that round.</p>
+                    <p>Payoffs are determined as follows:</p>
+                    <div class="table-responsive my-4">
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Number of OTHER participants choosing LOW</th>
+                                    <th>Your payoff if you choose LOW</th>
+                                    <th>Your payoff if you choose HIGH</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><b>4</b></td><td>10</td><td>12</td></tr>
+                                <tr><td><b>3</b></td><td>8</td><td>11</td></tr>
+                                <tr><td><b>2</b></td><td>6</td><td>9</td></tr>
+                                <tr><td><b>1</b></td><td>4</td><td>7</td></tr>
+                                <tr><td><b>0</b></td><td>2</td><td>5</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Timing and Rounds</h5>
+                    <p>After all submissions:</p>
+                    <ul style="line-height: 2;">
+                        <li>The experiment consists of multiple rounds.</li>
+                        <li>Each round has a fixed time limit (shown on your screen).</li>
+                        <li>If you do not submit a choice in time, a default option may be assigned.</li>
+                    </ul>
+
+                    <h5 class="fw-bold" style="color: indigo">Feedback After Each Round</h5>
+                    <p style="text-align: justify">You will see:</p>
+                    <ul style="line-height: 2;">
+                        <li>Your choice</li>
+                        <li>The number of other participants who chose Low and High</li>
+                        <li>Your profit for the round</li>
+                        <li>Your cumulative profit so far</li>
+                    </ul>
+
+                    <h5 class="fw-bold" style="color: indigo">Matching</h5>
+                    <ul style="line-height: 2;">
+                        <li>You will remain in the same group of participants for all rounds (unless stated otherwise).</li>
+                        <li>All decisions are anonymous.</li>
+                    </ul>
+
+                    <h5 class="fw-bold" style="color: indigo">Payment</h5>
+                    <ul style="line-height: 2;">
+                        <li>Your final payoff is based on your <b>total profit across all rounds</b>.</li>
+                        <li>This may be converted into a monetary reward according to the rules provided by the instructor.</li>
+                    </ul>
+
+                    <h5 class="fw-bold" style="color: indigo">Rules</h5>
+                    <ul style="line-height: 2;">
+                        <li>No communication with other participants unless explicitly allowed.</li>
+                        <li>Make your decisions independently.</li>
+                        <li>Do not attempt to identify or signal to others.</li>
+                    </ul>
+
+                </div>
+
+
+            </div>
+            <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+                <h6 class="fw-bold"><i class="bi bi-lightbulb"></i> Important</h6>
+                <ul class="mb-0" style="line-height: 2;">
+                    <li>Your earnings depend on both your decisions and the decisions of others.</li>
+                    <li>Try to make the best decision in each round to maximize your total payoff.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <p><b>Click "Start" when you are ready</b></p>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#nameModal" style="border-radius: 10px;">
+            Start
+        </button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="nameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Participant Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted mb-3">Please enter your player name:</p>
+                <input type="text" id="modal-name-input" class="form-control form-control-lg" placeholder="Your Name" style="border-radius: 10px;">
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" onclick="submitName()" class="btn btn-primary w-100 py-2" style="border-radius: 10px;">Start Experiment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitName() {
+        const nameInput = document.getElementById('modal-name-input');
+        const nameVal = nameInput.value.trim();
+
+        if (nameVal === "") {
+            alert("Please enter a name to continue. The name cannot be empty or consist only of spaces.");
+        } else {
+            // Transfer modal value to hidden oTree field
+            document.getElementsByName('player_name')[0].value = nameVal;
+            // Submit the oTree form
+            document.getElementById('form').submit();
+        }
+    }
+</script>
+
+
+<style>
+    body { background-color: #f8f9fa; }
+    .list-group-item { background: transparent; }
+    .otree-footer, .footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+{{ endblock }}

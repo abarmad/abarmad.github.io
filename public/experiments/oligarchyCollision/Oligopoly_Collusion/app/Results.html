@@ -1,0 +1,66 @@
+{% extends "global/Page.html" %}
+{{ block title }}
+    <span class="text-primary">Round {{ player.round_number }} Outcome</span>
+{{ endblock }}
+
+{{ block content }}
+<div class="container mt-4">
+    <div class="alert alert-secondary text-center py-4 shadow-sm border-0" style="border-radius: 15px;">
+        <h2 class="display-6 fw-bold">Market Results</h2>
+        <p class="fs-4 mt-3">
+            Your Profit this round: <strong class="text-success">{{ player.payoff }}</strong>
+        </p>
+        <p class="fs-5 text-muted">
+            Cumulative Profit: <strong>{{ cumulative_profit }}</strong>
+        </p>
+    </div>
+
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-8 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h5 class="text-muted mb-4 text-center">Summary of Actions</h5>
+
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
+                        <span class="fs-5">Your Choice:</span>
+                        <span class="fs-5 fw-bold text-primary">{{ player.choice }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
+                        <span class="fs-5">Other Participants who chose Low:</span>
+                        <span class="fs-5 fw-bold">{{ player.others_low }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pb-2">
+                        <span class="fs-5">Other Participants who chose High:</span>
+                        <span class="fs-5 fw-bold">{{ player.others_high }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{ if player.round_number == 1 }}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0" style="border-radius: 15px; background-color: #fff4f4; border: 1px solid #f5c6cb !important;">
+            <div class="card-body p-4">
+                <h5 class="text-dark mb-3">Reflective Reasoning</h5>
+                {{ formfield 'justification' }}
+            </div>
+        </div>
+    </div>
+</div>
+{{ endif }}
+
+<div class="text-center mt-5">
+    <button class="btn btn-outline-dark px-5 py-2" style="border-radius: 10px;">
+        {{ if player.round_number == 1 }}Submit & Continue{{ else }}Continue to Next Round{{ endif }}
+    </button>
+</div>
+
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .display-6 { letter-spacing: -1px; }
+</style>
+{{ endblock }}
