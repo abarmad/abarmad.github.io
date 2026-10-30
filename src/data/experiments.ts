@@ -87,23 +87,20 @@ In the first variant, a participant's profit depends only on their own contribut
       },
     ],
   },
+  {
+    title: "Monopoly Experiment",
+    description: `Participants act as firms in a group of five. Each round, every firm privately chooses a low or high production quantity, to see whether firms can sustain the low-quantity outcome that is best for the group when each one is tempted to produce more.
 
-  // ---- Not published yet: these two still need real descriptions. ----
-  // Send me each experiment's instructions PDF and I'll write the entry.
-  // To publish one, copy the template below, fill it in, and move it above this comment.
-  //
-  // {
-  //   title: "Oligarchy and Collusion",
-  //   description: `...`,
-  //   objectives: ["...", "..."],
-  //   zip: "oligarchyExp.zip",
-  //   instructions: "oligarchyExp/instructions.pdf",
-  // },
-  // {
-  //   title: "Public Goods",
-  //   description: `...`,
-  //   objectives: ["...", "..."],
-  //   zip: "publicGoodsExp.zip",
-  //   instructions: "publicGoodsExp/instructions.pdf",
-  // },
+Choosing high always pays more than choosing low, whatever the others do, but the group earns the most when everyone chooses low (10 each, versus 5 each if everyone chooses high). A firm's profit depends on its own choice and on how many of the other four chose low. Part 1 lasts 10 rounds, and groups are reshuffled every round. In Part 2, groups stay fixed, the number of rounds is random (a 10% chance of stopping after each round), and a group chat lets firms try to coordinate.`,
+    objectives: [
+      "Collusion",
+      "Prisoner's dilemma",
+      "Dominant strategies",
+      "Repeated vs. one-shot interaction",
+      "Communication and coordination",
+    ],
+    zip: "monopolyExp.zip",
+    instructions: "monopolyExp/instructions.pdf",
+  },
+
 ];

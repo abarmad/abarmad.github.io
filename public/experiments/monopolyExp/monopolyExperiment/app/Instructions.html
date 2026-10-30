@@ -6,7 +6,8 @@
     </figure>
     <br>
 </div>
-    <h2 class="fw-bold" style="text-align: center">Monopoly Quantity Game</h2>
+    <h2 class="fw-bold" style="text-align: center">Monopoly Experiment</h2>
+    <h4 class="text-muted" style="text-align: center">Part 1</h4>
 {{ endblock }}
 
 {{ block content }}
@@ -18,8 +19,12 @@
     <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
         <div class="card-body p-4">
             <h5 class="fw-bold"><i class="bi bi-trophy text-warning"></i>Overview</h5>
-            <p class="text-muted mb-0">You will participate in a computerized market experiment with {{numPlayers}} participants. In each round, you act as a firm choosing how much quantity to produce.
-                Your goal is to <b>maximize your total profit</b>. You will interact for {{numRounds}} rounds.</p>
+            <p class="text-muted mb-0">You will participate in a computerized market experiment. In each round, you will be placed in a group of <b>{{numPlayers}} participants</b>. In each round, you act as a firm choosing how much quantity to produce.
+                Your goal is to <b>maximize your total profit</b>.</p>
+            <ul class="mt-3 mb-0">
+                <li>You will interact for <b>{{numRounds}} rounds</b>.</li>
+                <li>Each round your group is formed at random.</li>
+            </ul>
         </div>
     </div>
 
@@ -41,20 +46,19 @@
                             <strong>High Quantity (H)</strong>
                         </li>
                     </ul>
-                    <p>You have to submit your choice before the timer expires.</p>
+                    <p>Submit your choice before the timer expires.</p>
                     <br>
                     <h5 class="fw-bold mb-3" style="color: indigo">How Your Profit Is Determined</h5>
                     <p>Your profit depends on:</p>
                     <ul style="line-height: 2;">
                         <li class="border-0">
-                            Your own choice (Low or High)
+                            Your choice (L or H)
                         </li>
                         <li class="border-0">
-                            The number of <b>other participants</b> who chose <b>low</b>
+                            The number of <b>other participants</b> in your group who chose <b>Low</b>
                         </li>
                     </ul>
-                    <p>After each round, your screen will display the number of low and number of high quantity and your profit for that round.</p>
-                    <p>Payoffs are determined as follows:</p>
+                    <p>Payoff Table:</p>
                     <div class="table-responsive my-4">
                         <table class="table table-bordered text-center align-middle">
                             <thead class="table-light">
@@ -74,26 +78,24 @@
                         </table>
                     </div>
 
-                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Timing and Rounds</h5>
-                    <p>After all submissions:</p>
-                    <ul style="line-height: 2;">
-                        <li>The experiment consists of multiple rounds.</li>
-                        <li>Each round has a fixed time limit (shown on your screen).</li>
-                        <li>If you do not submit a choice in time, a default option may be assigned.</li>
-                    </ul>
+                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Sequence of Each Round</h5>
+                    <ol style="line-height: 2;">
+                        <li><b>Decision Phase:</b> Choose L or H privately.</li>
+                        <li><b>Results Phase:</b> You will see:
+                            <ul>
+                                <li>Your choice</li>
+                                <li>Your profit for the round</li>
+                                <li>Your cumulative profit</li>
+                            </ul>
+                        </li>
+                    </ol>
 
-                    <h5 class="fw-bold" style="color: indigo">Feedback After Each Round</h5>
-                    <p style="text-align: justify">You will see:</p>
-                    <ul style="line-height: 2;">
-                        <li>Your choice</li>
-                        <li>The number of other participants who chose Low and High</li>
-                        <li>Your profit for the round</li>
-                        <li>Your cumulative profit so far</li>
-                    </ul>
+                    <h5 class="fw-bold" style="color: indigo">Timing</h5>
+                    <p>Each round has a fixed time limit (shown on your screen). If you do not submit a decision in time, a default option may be assigned.</p>
 
                     <h5 class="fw-bold" style="color: indigo">Matching</h5>
                     <ul style="line-height: 2;">
-                        <li>You will remain in the same group of participants for all rounds (unless stated otherwise).</li>
+                        <li>Participants are randomly reassigned into new groups of {{numPlayers}} in each round.</li>
                         <li>All decisions are anonymous.</li>
                     </ul>
 
@@ -101,6 +103,7 @@
                     <ul style="line-height: 2;">
                         <li>Your final payoff is based on your <b>total profit across all rounds</b>.</li>
                         <li>This may be converted into a monetary reward according to the rules provided by the instructor.</li>
+                        <li>Instructions for Part 2 will be provided after Part 1 ends.</li>
                     </ul>
 
                     <h5 class="fw-bold" style="color: indigo">Rules</h5>

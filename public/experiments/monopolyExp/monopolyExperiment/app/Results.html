@@ -1,6 +1,6 @@
 {% extends "global/Page.html" %}
 {{ block title }}
-    <span class="text-primary">Round {{ player.round_number }} Outcome</span>
+    <span class="text-primary">Part {{ part }} &ndash; Round {{ roundNum }} Outcome</span>
 {{ endblock }}
 
 {{ block content }}
@@ -25,6 +25,7 @@
                         <span class="fs-5">Your Choice:</span>
                         <span class="fs-5 fw-bold text-primary">{{ player.choice }}</span>
                     </div>
+                    {{ if show_others }}
                     <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                         <span class="fs-5">Other Participants who chose Low:</span>
                         <span class="fs-5 fw-bold">{{ player.others_low }}</span>
@@ -33,6 +34,7 @@
                         <span class="fs-5">Other Participants who chose High:</span>
                         <span class="fs-5 fw-bold">{{ player.others_high }}</span>
                     </div>
+                    {{ endif }}
                 </div>
             </div>
         </div>
@@ -53,7 +55,7 @@
 
 <div class="text-center mt-5">
     <button class="btn btn-outline-dark px-5 py-2" style="border-radius: 10px;">
-        {{ if player.round_number == 1 }}Submit & Continue{{ else }}Continue to Next Round{{ endif }}
+        {{ if player.round_number == 1 }}Submit & Continue{{ else }}Continue{{ endif }}
     </button>
 </div>
 

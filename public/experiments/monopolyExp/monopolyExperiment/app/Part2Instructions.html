@@ -1,0 +1,89 @@
+{{ block title }}
+<h2 class="fw-bold" style="text-align: center">Monopoly Experiment</h2>
+<h4 class="text-muted" style="text-align: center">Part 2</h4>
+{{ endblock }}
+
+{{ block content }}
+<div class="container mt-3">
+
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold" style="color: indigo">Overview</h5>
+            <p>You will now participate in a second part of the experiment. You will be placed in a group of <b>{{ numPlayers }} participants</b> at random and will <b>remain in the same group for all rounds</b>.</p>
+            <ul style="line-height: 2;">
+                <li>The number of rounds will be determined at random.</li>
+                <li>Each round has a <b>{{ stopPct }}%</b> chance of being the last, and a <b>{{ continuePct }}%</b> chance of continuing to the next round (with the same group).</li>
+            </ul>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">Your Decision (Each Round)</h5>
+            <p>Choose one option:</p>
+            <ul style="line-height: 2;">
+                <li><strong>Low Quantity (L)</strong></li>
+                <li><strong>High Quantity (H)</strong></li>
+            </ul>
+            <p>Each round has a fixed time limit. If you do not submit a decision in time, a default option may be assigned.</p>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">Communication (Chat)</h5>
+            <p>Before making your decision, you will have access to a real-time group chat.</p>
+            <ul style="line-height: 2;">
+                <li>You may discuss strategies or coordinate. But ultimately you are free to do as you find best for you.</li>
+            </ul>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">How Your Profit Is Determined</h5>
+            <p>Your profit depends on:</p>
+            <ul style="line-height: 2;">
+                <li>Your choice (L or H)</li>
+                <li>The number of <b>other participants</b> who chose Low</li>
+            </ul>
+
+            <p>Payoff Table:</p>
+            <div class="table-responsive my-4">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Number of OTHER participants choosing LOW</th>
+                            <th>Your payoff if you choose LOW</th>
+                            <th>Your payoff if you choose HIGH</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><b>4</b></td><td>10</td><td>12</td></tr>
+                        <tr><td><b>3</b></td><td>8</td><td>11</td></tr>
+                        <tr><td><b>2</b></td><td>6</td><td>9</td></tr>
+                        <tr><td><b>1</b></td><td>4</td><td>7</td></tr>
+                        <tr><td><b>0</b></td><td>2</td><td>5</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">Sequence of Each Round</h5>
+            <ol style="line-height: 2;">
+                <li><b>Chat:</b> The chat box is open all throughout the experiment.</li>
+                <li><b>Decision Phase:</b> Choice of L or H.</li>
+                <li><b>Results Phase:</b> You will see:
+                    <ul>
+                        <li>Your choice</li>
+                        <li>The number of L and the number of H choices</li>
+                        <li>Your profit</li>
+                        <li>Your cumulative profit</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">Matching</h5>
+            <p>You remain in the same group for all rounds.</p>
+
+            <h5 class="fw-bold mt-4" style="color: indigo">Payment</h5>
+            <p>Your total payoff is the sum of profits across all rounds.</p>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button class="btn btn-primary btn-lg px-5" style="border-radius: 10px;">Start Part 2</button>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+</style>
+{{ endblock }}
