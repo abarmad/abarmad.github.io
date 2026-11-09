@@ -16,20 +16,20 @@ export interface EventItem {
 // ones first, and an event disappears after its last day.
 // If nothing here is upcoming, the box is hidden.
 export const events: EventItem[] = [
-  {
-    date: "2026-10-31", // REPLACE this sample with a real event
-    title: "ESA North America",
-    type: "Paper",
-    location: "Charlottesville, Virginia, USA",
-    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
-  },
-  {
-    date: "2026-11-02", // REPLACE this sample with a real event
-    title: "Universidad Francisco Marroquín",
-    type: "Paper",
-    location: "Ciudad de Guatemala, Guatemala",
-    details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
-  },
+  // {
+  //   date: "2026-10-31", // REPLACE this sample with a real event
+  //   title: "ESA North America",
+  //   type: "Paper",
+  //   location: "Charlottesville, Virginia, USA",
+  //   details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
+  // },
+  // {
+  //   date: "2026-11-02", // REPLACE this sample with a real event
+  //   title: "Universidad Francisco Marroquín",
+  //   type: "Paper",
+  //   location: "Ciudad de Guatemala, Guatemala",
+  //   details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
+  // },
   {
     date: "2026-11-12", // REPLACE this sample with a real event
     title: "American University of Sharjah",
