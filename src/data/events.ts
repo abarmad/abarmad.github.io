@@ -30,13 +30,13 @@ export const events: EventItem[] = [
   //   location: "Ciudad de Guatemala, Guatemala",
   //   details: "Presenting: Order Bias in Performance Evaluation: An Experiment with Sequential Contributors",
   // },
-  {
-    date: "2026-11-12", // REPLACE this sample with a real event
-    title: "American University of Sharjah",
-    type: "Talk",
-    location: "Sharjah, UAE",
-    details: "Guest Talk: More Than a Research Space: The Experimental Lab as a Catalyst for Academic Excellence",
-  },
+  // {
+  //   date: "2026-11-12", // REPLACE this sample with a real event
+  //   title: "American University of Sharjah",
+  //   type: "Talk",
+  //   location: "Sharjah, UAE",
+  //   details: "Guest Talk: More Than a Research Space: The Experimental Lab as a Catalyst for Academic Excellence",
+  // },
   {
     date: "2027-01-04", // REPLACE this sample with a real event
     title: "ASSA ESA Session on Experiments on Bounded Rationality and Communication",
