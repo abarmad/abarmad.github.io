@@ -17,6 +17,11 @@ const formatDate = (iso: string) =>
     timeZone: "UTC",
   });
 
+// Turns *text* into italics. Everything else is escaped, so stray < or & can't break the page.
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const rich = (s: string) => escapeHtml(s).replace(/\*(.+?)\*/g, "<em>$1</em>");
+
 // Upcoming events: hide anything whose last day has passed, soonest first.
 const today = new Date().toISOString().slice(0, 10);
 const upcoming = events
@@ -150,7 +155,7 @@ const relatedLinks = [
                                 </p>
                                 <h3>{ev.title}</h3>
                                 {ev.location && <p class="where">{ev.location}</p>}
-                                {ev.details && <p class="details">{ev.details}</p>}
+                                {ev.details && <p class="details" set:html={rich(ev.details)} />}
                                 {ev.links && ev.links.length > 0 && (
                                   <p class="links">
                                     {ev.links.map((l) => (
@@ -168,8 +173,11 @@ const relatedLinks = [
                     <>
                       <p class="kind">Recent highlight</p>
                       <p class="date">{formatDate(s.item.date)}</p>
-                      <h3>{s.item.title}</h3>
-                      {s.item.summary && <p class="summary">{s.item.summary}</p>}
+                      <h3 set:html={rich(s.item.title)} />
+                      {s.item.summary &&
+                        s.item.summary.split("\n\n").map((para) => (
+                          <p class="summary" set:html={rich(para)} />
+                        ))}
                       {s.item.body && (
                         <details class="more-info">
                           <summary>
@@ -178,7 +186,7 @@ const relatedLinks = [
                           </summary>
                           <div class="more-body">
                             {s.item.body.split("\n\n").map((para) => (
-                              <p class="body">{para}</p>
+                              <p class="body" set:html={rich(para)} />
                             ))}
                           </div>
                         </details>
@@ -346,7 +354,7 @@ const relatedLinks = [
       );
 
       // Scrolling through the events list (including by touch, where there is no hover)
-      // holds the rotation for a few seconds after the last scroll movement.
+      // holds the rotation for a moment after the last scroll movement.
       scrollers.forEach((s) =>
         s.addEventListener(
           "scroll",

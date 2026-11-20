@@ -15,6 +15,19 @@ export interface NewsItem {
 // and shows the most recent ones.
 export const news: NewsItem[] = [
   {
+    date: "2026-11-20", // change to the real announcement date
+    title: "Recent Publication: *Competing for power in multilateral negotiations under majority and unanimity rules*",
+    summary:
+      `Games and Economic Behavior, 160 (2026): 104043 \n\n
+      People compete for power in organizations, politics, and firms. Can the rules for reaching agreement curb that costly competition? 
+      Could a rule that saves resources also make a deal harder to reach? Our bargaining experiment weighs the effort wasted seeking power 
+      against the costs of delay and failure to agree.`,
+    links: [
+      // { label: "Documentation", href: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7370379" },
+      { label: "Read the paper", href: "/papers/competing-for-power.pdf" },
+    ],
+  },
+  {
     date: "2026-10-01", // change to the real announcement date
     title: "New tool: Communication Annotation Tool (CAT)",
     summary:

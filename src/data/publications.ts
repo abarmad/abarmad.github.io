@@ -18,7 +18,7 @@ export const published: Publication[] = [
     title: "Competing for Power in Multilateral Negotiations under Majority and Unanimity Rules",
     coauthors: "Ernesto Reuben",
     journal: "Games and Economic Behavior",
-    status: "Accepted",
+    details: "160(2026): 104043",
     abstract: `Competition for power is a costly practice present in organizations and groups where collective
       decisions are made. In a multilateral bargaining experiment, we study how different agreement
       rules affect competition for power through a contest for the right to propose a distribution of
