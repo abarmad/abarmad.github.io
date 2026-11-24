@@ -5,7 +5,7 @@ import { news } from "../data/news";
 import { events } from "../data/events";
 
 const PANEL_TITLE = "News";
-const ROTATE_SECONDS = 8;   // time each slide stays on screen
+const ROTATE_SECONDS = 6;   // time each slide stays on screen
 
 // No limits: every news item and every upcoming event is shown.
 const recent = [...news].sort((a, b) => b.date.localeCompare(a.date));
