@@ -1,0 +1,58 @@
+{% extends "global/Page.html" %}
+
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right" xmlns="http://www.w3.org/1999/html">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+</div>{{ endblock }}
+
+{{ block content }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+
+            <!-- Completion Card Panel -->
+            <div class="card shadow border-0 p-5" style="border-radius: 20px; background-color: #ffffff;">
+                <div class="card-body">
+
+                    <!-- Decorative Success Badge Icon -->
+                    <div class="mb-4">
+                        <span class="display-1 text-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                    </div>
+
+                    <!-- Main Banner Header -->
+                    <h1 class="fw-bold mb-3" style="color: #212529;">Experiment Completed</h1>
+                    <hr class="my-4 m-auto text-muted" style="max-width: 150px; height: 2px;">
+                    <!-- Your Explicit Request Text Strings -->
+                    <p class="fs-4 text-indigo fw-semibold mb-4">
+                        Thank you for your participation and attendance today!
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Clean, soft backdrop environment styling */
+    body {
+        background-color: #f4f6f9 !important;
+    }
+    .text-indigo {
+        color: indigo !important;
+    }
+
+    /* Hide all system utility navigation indicators automatically */
+    .otree-btn-next, .otree-footer, .footer, .navbar {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+{{ endblock }}

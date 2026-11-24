@@ -1,0 +1,66 @@
+{{ extends 'otree/WaitPage.html' }}
+{{ block content }}
+<p> In this round, you will be paired with another Prolific participant. <br> The other participant will be <span style="color: red"><b>your partner</b></span>. You and your partner will be working as a team. <br> Please wait while the computer finds a partner for you.</p>
+<p>If no one shows up in 5 minutes, you will have the choice of dropping out. However, you can stay an additional 5 minutes and have a chance to increase your earnings.</p>
+<div id = "timer_text">Time left to wait <span id="time">10:00</span></div>
+<br>
+
+<button id="btn-drop" type="submit" class="btn-primary" style="background-color: red; border-color: red; visibility: hidden;"><b>Drop out</b></button>
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+{{ endblock }}
+
+{{ block styles }}
+<style>
+.Row {
+    display: table;
+    width: 100%;
+    border-spacing: 10px;
+}
+.Column {
+    display: table-cell;
+}
+</style>
+{{ endblock }}
+
+<script>
+
+
+   function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+        }
+    }, 1000);
+}
+
+    window.onload = function () {
+    setTimeout(function(){
+        document.querySelector("#btn-drop").style.visibility = "visible";
+        document.querySelector("#timer_text").style.visibility = "hidden";
+
+        }, 10*30000);
+
+    var fiveMinutes = 60 * 5,
+        display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+    };
+
+</script>
+

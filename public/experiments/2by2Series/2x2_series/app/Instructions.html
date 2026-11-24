@@ -1,0 +1,137 @@
+{% extends "global/Page.html" %}
+
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right" xmlns="http://www.w3.org/1999/html">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+    <br>
+</div>
+    <h2 class="fw-bold" style="text-align: center">Strategic Interaction Experiment</h2>
+{{ endblock }}
+
+{{ block content }}
+<h4 class="fw-bold"><i class="bi bi-info-circle-fill text-primary"></i> Instructions</h4>
+<div class="container mt-3">
+    <!-- Hidden oTree field for the modal -->
+    <div style="display: none;">
+        {{ formfield 'player_name' }}
+    </div>
+
+    <!-- Overview Card -->
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold"><i class="bi bi-card-list text-primary"></i> Overview</h5>
+            <p class="text-muted mb-0">Welcome! In this experiment, you will participate in a sequence of interactive games. Your goal is to make choices that <b>maximize your total profit</b> based on the rules of each game.</p><br>
+            <ul style="line-height: 2;">
+                <li class="border-0">
+                    You will play <b>{{NUM_GAMES}} different games</b>.
+                </li>
+                <li class="border-0">
+                    Each game lasts for <b>{{ROUNDS_PER_GAME}} rounds</b> (for a total of {{NUM_ROUNDS}} rounds).
+                </li>
+                <li class="border-0">
+                    In every single round, you will be <b>randomly matched</b> with a new participant in the room.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-4">
+            <!-- Details Card -->
+            <div class="card shadow-sm border-0" style="border-radius: 15px; margin-bottom: 1.05rem !important;">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-3" style="color: indigo">Your Decision (Each Round)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 ps-0" style="text-align: justify">
+                            In each round, you and your randomly assigned opponent will choose between two actions:
+                        </li>
+                    </ul>
+                    <ul style="line-height: 2;">
+                        <li class="border-0"><strong>Action A</strong></li>
+                        <li class="border-0"><strong>Action B</strong></li>
+                    </ul>
+                    <p class="text-danger"><i>You have a maximum of 1 minute to make your choice per round. If the timer expires, a choice will be randomly made for you.</i></p>
+                    <br>
+
+                    <h5 class="fw-bold mb-3" style="color: indigo">How Your Profit Is Determined</h5>
+                    <p>Before making your choice, you will be shown a <b>Payoff Matrix</b>. Your profit in a round depends simultaneously on:</p>
+                    <ul style="line-height: 2;">
+                        <li class="border-0">Your choice (A or B)</li>
+                        <li class="border-0">Your opponent's choice (A or B)</li>
+                    </ul>
+                    <p>The matrix will show exactly how many points you and your opponent will earn for every possible combination of choices. You will act either as the "Row" player or the "Column" player.</p>
+
+                    <h5 class="fw-bold mt-4 mb-3" style="color: indigo">Sequence of Each Round</h5>
+                    <ol style="line-height: 2;">
+                        <li><b>Decision Phase:</b> View the matrix and choose A or B privately.</li>
+                        <li><b>Results Phase:</b> Discover your opponent's choice and see your profit for that round.</li>
+                    </ol>
+                    <p><i>Note: After every 5 rounds, there will be a brief pause to review class-level statistics for the game you just completed.</i></p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <p><b>Click "Start" when you are ready to enter your name</b></p>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#nameModal" style="border-radius: 10px;">
+            Start
+        </button>
+    </div>
+
+</div>
+
+<!-- The Modal you created -->
+<div class="modal fade" id="nameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Participant Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted mb-3">Please enter your player name:</p>
+                <input type="text" id="modal-name-input" class="form-control form-control-lg" placeholder="Your Name" style="border-radius: 10px;">
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" onclick="submitName()" class="btn btn-primary w-100 py-2" style="border-radius: 10px;">Start Experiment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitName() {
+        const nameInput = document.getElementById('modal-name-input');
+        const nameVal = nameInput.value.trim();
+
+        if (nameVal === "") {
+            alert("Please enter a name to continue. The name cannot be empty or consist only of spaces.");
+        } else {
+            // Transfer modal value to hidden oTree field
+            document.getElementsByName('player_name')[0].value = nameVal;
+            // Submit the oTree form
+            document.getElementById('form').submit();
+        }
+    }
+</script>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .list-group-item { background: transparent; }
+    /* Hide default oTree footers */
+    .otree-footer, .footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+{{ endblock }}

@@ -1,0 +1,119 @@
+{% extends "global/Page.html" %}
+
+{{ block title }}
+    {{ game_name }} Summary & Feedback
+{{ endblock }}
+
+{{ block content }}
+<div class="container mt-3">
+
+    <!-- Requirement 3: Total Points Earned for this Game Type -->
+    <div class="card shadow-sm border-0 mb-4 bg-light text-center" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <h5 class="text-muted text-uppercase tracking-wide">Your Performance</h5>
+            <h2 class="fw-bold text-success mb-0">
+                Total Points Earned in This Game: <span class="badge bg-success px-3 py-2">{{ game_total_points }}</span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Requirement 1: Class Level Feedback Table -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold text-secondary mb-3 text-center">Class Action Distribution</h4>
+                    <p class="text-muted text-center small">Percentage of actions selected by the class across each round.</p>
+
+                    <table class="table table-hover align-middle text-center mt-3">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Round</th>
+                                <th class="text-primary">Action A %</th>
+                                <th class="fw-bold" style="color: orange;">Action B %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in round_stats %}
+                            <tr>
+                                <td class="fw-bold">Round {{ r.game_round }}</td>
+                                <td class="text-primary fw-bold">{{ r.pct_A }}%</td>
+                                <td class="fw-bold" style="color: orange;">{{ r.pct_B }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requirement 2: Matrix with Payoffs and Outcome Percentages -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 15px;">
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <h4 class="card-title fw-bold text-secondary mb-3 text-center">Outcome Frequency Matrix</h4>
+                        <p class="text-muted text-center small">Payoffs shown as (Row, Column). Percentages indicate total frequency of that cell over all 5 rounds.</p>
+                    </div>
+
+                    <!-- 2x2 Custom Matrix Display -->
+                    <div class="matrix-wrapper my-auto px-3">
+                        <table class="table table-bordered border-dark text-center align-middle m-0" style="table-layout: fixed; height: 220px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: none; width: 20%;"></th>
+                                    <th class="table-secondary" style="width: 40%;">Column A</th>
+                                    <th class="table-secondary" style="width: 40%;">Column B</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th class="table-secondary align-middle">Row A</th>
+                                    <td class="p-3">
+                                        <div class="fs-5 fw-bold text-dark">{{ cell_AA.payoffs }}</div>
+                                        <div class="badge bg-primary mt-2 fs-6">{{ cell_AA.pct }}% of matches</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <div class="fs-5 fw-bold text-dark">{{ cell_AB.payoffs }}</div>
+                                        <div class="badge bg-primary mt-2 fs-6">{{ cell_AB.pct }}% of matches</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary align-middle">Row B</th>
+                                    <td class="p-3">
+                                        <div class="fs-5 fw-bold text-dark">{{ cell_BA.payoffs }}</div>
+                                        <div class="badge bg-primary mt-2 fs-6">{{ cell_BA.pct }}% of matches</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <div class="fs-5 fw-bold text-dark">{{ cell_BB.payoffs }}</div>
+                                        <div class="badge bg-primary mt-2 fs-6">{{ cell_BB.pct }}% of matches</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="text-center mt-4 mb-5">
+        <h3>
+            Please wait for the experimenter to move you to the next page.
+        </h3>
+    </div>
+
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .matrix-wrapper table {
+        border-collapse: separate;
+    }
+    /* Clean, strict borders inside the 2x2 area */
+    .matrix-wrapper th, .matrix-wrapper td {
+        border: 2px solid #343a40 !important;
+    }
+</style>
+{{ endblock }}

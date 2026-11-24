@@ -1,0 +1,276 @@
+{% extends "global/Page.html" %}
+
+{{ block title }}Final Results and Overview{{ endblock }}
+{{ block content }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="card mb-5 shadow-sm">
+    <div class="card-header bg-dark text-white"><h4>Global Leaderboard</h4></div>
+    <div class="card-body">
+        <table class="table table-striped table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>Total Accumulated Profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for p in leaderboard }}
+                    <tr class="{{ if p.is_me }}table-primary fw-bold{{ endif }}">
+                        <td>{{ p.rank }}</td>
+                        <td>{{ p.name }} {{ if p.is_me }}(You){{ endif }}</td>
+                        <td>{{ p.total_profit }} points</td>
+                    </tr>
+                {{ endfor }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<h3 class="mb-4">Play Evolution & Game Summaries</h3>
+
+<!-- Loop through each game as its own horizontal row row block -->
+{{ for g in games_rows }}
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-secondary text-white fw-bold">
+        {{ g.game_name }} Analysis
+    </div>
+    <div class="card-body">
+        <div class="row align-items-center">
+
+            <!-- LEFT SIDE: Game Matrix frequencies -->
+            <div class="col-md-5 text-center">
+                <h5>Overall Choice Distribution</h5>
+                <p class="text-muted small mb-2">Cell values show: (Payoffs) / % Chosen</p>
+
+                <table class="table table-bordered border-dark m-auto align-middle" style="max-width: 340px; font-size: 0.95rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="diagonal-split-cell">
+                                <div class="diagonal-text column-text text-secondary">Column</div>
+                                <div class="diagonal-text row-text text-secondary">Row</div>
+                            </th>
+                            <th class="text-primary">Action A <span class="text-muted small d-block">(Col)</span></th>
+                            <th class="text-primary">Action B <span class="text-muted small d-block">(Col)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="table-light text-primary text-start ps-2">Action A <span class="text-muted small fw-normal">(Row)</span></th>
+                            <td class="p-3 bg-light">
+                                <strong>({{ g.cell_AA.payoffs }})</strong><br>
+                                <span class="badge bg-success">{{ g.cell_AA.pct }}%</span>
+                            </td>
+                            <td class="p-3 bg-light">
+                                <strong>({{ g.cell_AB.payoffs }})</strong><br>
+                                <span class="badge bg-success">{{ g.cell_AB.pct }}%</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="table-light text-primary text-start ps-2">Action B <span class="text-muted small fw-normal">(Row)</span></th>
+                            <td class="p-3 bg-light">
+                                <strong>({{ g.cell_BA.payoffs }})</strong><br>
+                                <span class="badge bg-success">{{ g.cell_BA.pct }}%</span>
+                            </td>
+                            <td class="p-3 bg-light">
+                                <strong>({{ g.cell_BB.payoffs }})</strong><br>
+                                <span class="badge bg-success">{{ g.cell_BB.pct }}%</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MIDDLE SEPARATOR LINE -->
+            <div class="col-md-1 d-none d-md-block text-center" style="border-left: 2px solid #dee2e6; height: 180px;"></div>
+
+            <!-- RIGHT SIDE: Strategy Evolution Graph -->
+            <div class="col-md-6">
+                <h5 class="text-center mb-2">Strategy Shifts (Over 5 Rounds)</h5>
+                <div style="position: relative; height:200px; width:100%">
+                    <canvas id="chart_game_{{ g.game_number }}"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Inline JavaScript loops rendering execution configuration profiles for every chart layout -->
+<script>
+    new Chart(document.getElementById('chart_game_{{ g.game_number }}'), {
+        type: 'line',
+        data: {
+            labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
+            datasets: [
+                {
+                    label: '% Action A',
+                    data: {{ g.evolution_A | json }},
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.15,
+                    fill: true
+                },
+                {
+                    label: '% Action B',
+                    data: {{ g.evolution_B | json }},
+                    borderColor: '#fd7e14',
+                    backgroundColor: 'rgba(253, 126, 20, 0.05)',
+                    tension: 0.15,
+                    borderDash: [5, 5]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100,
+                    title: { display: true, text: 'Percentage (%)' }
+                }
+            },
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+{{ endfor }}
+
+<div class="card mt-5 mb-5 shadow-sm border-0" style="border-radius: 15px; background-color: #f8f9fa;">
+    <div class="card-header bg-dark text-white fw-bold" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+        <h4 class="mb-0 py-1"><i class="bi bi-pencil-square"></i> Final Feedback Survey</h4>
+    </div>
+    <div class="card-body p-4">
+
+        <!-- Question 1: Slider -->
+        <div class="mb-4">
+            <label for="q1_range" class="form-label fw-bold">
+                1. From 1 to 5, how useful were the experiments for you to understand economics concepts?
+            </label>
+            <!-- FIXED: Modified padding parameters to match native browser slider tracks -->
+            <div style="max-width: 650px; margin: 0 auto; padding: 0 10px;">
+                <input type="range" class="form-range" min="1" max="5" step="1" name="q1" id="q1_range" required value="3">
+
+                <!-- FIXED: Implemented an absolute percentage placement container -->
+                <div class="slider-labels-container">
+                    <div class="slider-label-col" style="left: 0%;">
+                        <span class="num">1</span>
+                        <span class="desc text-muted d-block">Not useful at all</span>
+                    </div>
+                    <div class="slider-label-col" style="left: 25%;">
+                        <span class="num">2</span>
+                    </div>
+                    <div class="slider-label-col" style="left: 50%;">
+                        <span class="num">3</span>
+                    </div>
+                    <div class="slider-label-col" style="left: 75%;">
+                        <span class="num">4</span>
+                    </div>
+                    <div class="slider-label-col" style="left: 100%;">
+                        <span class="num">5</span>
+                        <span class="desc text-muted d-block">Very useful</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4 text-muted">
+
+        <!-- Question 2: Radio Selection -->
+        <div class="mb-4">
+            <label class="form-label fw-bold">
+                2. Have you participated before in experiments on decision making?
+            </label>
+            <div class="ms-2">
+                {{ formfield_errors 'q2' }}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="q2" id="q2_class" value="class" required>
+                    <label class="form-check-label" for="q2_class">Yes, in class</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="q2" id="q2_lab" value="lab">
+                    <label class="form-check-label" for="q2_lab">Yes, in lab</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="q2" id="q2_never" value="never">
+                    <label class="form-check-label" for="q2_never">No, never participated before this class</label>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4 text-muted">
+
+        <!-- Question 3: Long Text Box -->
+        <div class="mb-4">
+            <label for="q3_text" class="form-label fw-bold">
+                3. The Social Science Experimental Laboratory is currently seeking ways to promote the use of experiments in class. We would like to know how these experiments have benefited you in learning so that we can communicate to others the value of experimental methods for teaching economics.
+            </label>
+            {{ formfield_errors 'q3' }}
+            <textarea class="form-control" name="q3" id="q3_text" rows="4" placeholder="Type your response here..." required></textarea>
+        </div>
+
+        <!-- Custom Submit Button overriding default next_button -->
+        <div class="text-center mt-5">
+            <button class="otree-btn-next btn btn-success btn-lg px-5 shadow" style="border-radius: 10px; font-weight: bold;">
+                Submit
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .diagonal-split-cell {
+        position: relative;
+        width: 120px;
+        height: 65px;
+        padding: 0 !important;
+        background: linear-gradient(to top right, transparent calc(50% - 0.5px), #212529 calc(50% - 0.5px), #212529 calc(50% + 0.5px), transparent calc(50% + 0.5px)) !important;
+    }
+
+    .diagonal-text {
+        position: absolute;
+        font-size: 0.8rem;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .column-text {
+        top: 6px;
+        right: 8px;
+    }
+
+    .row-text {
+        bottom: 6px;
+        left: 8px;
+    }
+
+    /* FIXED: Position wrapper with explicit relative height constraints */
+    .slider-labels-container {
+        position: relative;
+        width: 100%;
+        height: 45px;
+        margin-top: 6px;
+    }
+
+    /* FIXED: Using percentage offsets combined with horizontal alignment centering transforms */
+    .slider-label-col {
+        position: absolute;
+        transform: translateX(-50%);
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+
+    .slider-label-col .desc {
+        font-size: 0.75rem;
+        font-weight: normal;
+        margin-top: 1px;
+    }
+</style>
+{{ endblock }}

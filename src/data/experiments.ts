@@ -102,5 +102,19 @@ Choosing high always pays more than choosing low, whatever the others do, but th
     zip: "monopolyExp.zip",
     instructions: "monopolyExp/instructions.pdf",
   },
+  {
+    title: "Strategic Interaction: 2x2 Games",
+    description: `Participants play four classic 2x2 games, five rounds each, against a new random partner every round. Points depend on both players' choices.
 
+The four games are a prisoner's dilemma, a coordination game, a battle of the sexes, and matching pennies. In each round, participants see a payoff matrix, choose Action A or Action B at the same time as their partner, and then see what both earned. After each game, the class sees feedback on how everyone chose, which makes a natural pause for discussion. At the end there is a leaderboard, a summary of all four games, and a short survey.`,
+    objectives: [
+      "Dominant strategies",
+      "Nash equilibrium",
+      "Cooperation and defection",
+      "Coordination",
+      "Mixed strategies",
+    ],
+    zip: "2by2Series.zip",
+    instructions: "2by2Series/instructions.pdf",
+  },
 ];

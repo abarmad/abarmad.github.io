@@ -1,0 +1,127 @@
+{% extends "global/Page.html" %}
+
+{{ block title }}
+<div style="flex:0 0 auto; text-align: right" xmlns="http://www.w3.org/1999/html">
+    <figure style="margin:0;">
+        <img src="{% static 'images/ssel_logo.png' %}" width="300"/>
+    </figure>
+    <br>
+</div>
+    <h2 class="fw-bold" style="text-align: center">Round {{ game_round }} of 5</h2>
+{{ endblock }}
+
+{{ block content }}
+<h4 class="fw-bold"><i class="bi bi-controller text-primary"></i> Decision Phase</h4>
+<div class="container mt-3">
+
+    <!-- Role Alert -->
+    <div class="alert alert-info border-0 shadow-sm text-center mb-4" style="border-radius: 15px; font-size: 1.1rem;">
+        You have been randomly matched with a new opponent. <br>
+        You are playing as: <strong class="text-indigo">{{ role }}</strong>
+    </div>
+
+    <div class="row">
+        <!-- Matrix Card -->
+        <div class="col-md-7 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 15px;">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-3" style="color: indigo">Payoff Matrix</h5>
+                    <p class="text-muted small mb-3">(Your Payoff, Opponent's Payoff)</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle" style="font-size: 1.1rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <!-- Diagonal Split Header Cell -->
+                                    <th class="diagonal-split-cell">
+                                        <div class="diagonal-text column-text text-secondary">Column</div>
+                                        <div class="diagonal-text row-text text-secondary">Row</div>
+                                    </th>
+                                    <th class="text-primary text-center">Action A</th>
+                                    <th class="text-primary text-center">Action B</th>
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th class="table-light text-primary">A</th>
+                                    <td>{{ matrix.A_A }}</td>
+                                    <td>{{ matrix.A_B }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-light text-primary">B</th>
+                                    <td>{{ matrix.B_A }}</td>
+                                    <td>{{ matrix.B_B }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decision Card -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 15px; background-color: #f8f9fa;">
+                <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                    <h5 class="fw-bold mb-4" style="color: indigo">Make Your Choice</h5>
+
+                    <!-- Standard oTree formfields, styled via CSS block below -->
+                    <div class="choice-wrapper">
+                        {{ formfields }}
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="otree-btn-next btn btn-primary btn-lg w-100 shadow-sm" style="border-radius: 10px;">
+                            Submit Decision
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .text-indigo { color: indigo !important; }
+
+    /* Center and style the oTree radio buttons */
+    .choice-wrapper { text-align: left; display: inline-block; margin: 0 auto; }
+    .form-check { margin-bottom: 15px; font-size: 1.2rem; }
+    .form-check-input { width: 1.5em; height: 1.5em; margin-right: 10px; cursor: pointer; }
+    .form-check-label { cursor: pointer; padding-top: 4px; }
+
+    /* Hide default oTree footers */
+    .otree-footer, .footer {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+    }
+    .diagonal-split-cell {
+    position: relative;
+    width: 140px;      /* Set a fixed size to keep the diagonal line proportional */
+    height: 75px;      /* Needs an explicit height for positioning internal text elements */
+    padding: 0 !important;
+    background: linear-gradient(to top right, transparent calc(50% - 0.5px), #212529 calc(50% - 0.5px), #212529 calc(50% + 0.5px), transparent calc(50% + 0.5px)) !important;
+    }
+
+    .diagonal-text {
+    position: absolute;
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height: 1;
+    }
+
+    .column-text {
+    top: 8px;
+    right: 12px;
+    }
+
+    .row-text {
+    bottom: 8px;
+    left: 12px;
+    }
+
+</style>
+{{ endblock }}
